@@ -26,6 +26,7 @@ public class CategoryDto {
         if (category == null) {
             return null;
         }
+        //todo
 //        List<Integer> productIDs = category.getProducts()
 //                .stream()
 //                .map(Product::getProductId)
@@ -35,7 +36,7 @@ public class CategoryDto {
                 .categoryId(category.getCategoryId())
                 .name(category.getName())
                 .description(category.getDescription())
-//Todo               .products(productIDs)
+//                .products(productIDs)
                 .categoryType(category.getCategoryType())
                 .build();
     }
@@ -49,6 +50,16 @@ public class CategoryDto {
         category.setName(categoryDto.getName());
         category.setDescription(categoryDto.getDescription());
         category.setCategoryType(categoryDto.getCategoryType());
+//
+//        List<Product> products = categoryDto.getProducts()
+//                .stream()
+//                .map(id -> {
+//                    Product product = new Product();
+//                    product.setProductId(id);
+//                    return product;
+//                })
+//                .collect(Collectors.toList());
+//        category.setProducts(products);
         return category;
     }
 }

@@ -34,12 +34,8 @@ public class ProductServiceImpl implements IProductService {
         if (!errors.isEmpty()) {
             log.error("Product is not valid: {}", errors);
         }
-
         Product createdProduct = productRepository.save(ProductDto.toEntity(productDto));
         return ProductDto.fromEntity(createdProduct);
-//        return ProductDto.fromEntity(
-//                productRepository.save(
-//                        ProductDto.toEntity(productDto)));
     }
 
     @Override

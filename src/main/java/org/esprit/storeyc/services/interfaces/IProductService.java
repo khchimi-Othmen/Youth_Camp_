@@ -12,7 +12,6 @@ public interface IProductService {
     void deleteProduct(Integer productId);
     ProductDto getProductById(Integer productId);
     List<ProductDto> getAllProducts();
-//    List<ProductDto> filterProductsByCategory(CaType category);//searchProductsByType
     List<ProductDto> searchProductsByName(String name);
 
     //the Management of promotions/offers
@@ -33,7 +32,6 @@ public interface IProductService {
     void deleteSale(Integer saleId);
 
     // methods for payment management
-
     void processPayment(Integer productId, BigDecimal amount);
 
 }
