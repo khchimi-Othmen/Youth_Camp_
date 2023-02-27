@@ -3,7 +3,9 @@ package org.esprit.storeyc.services.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.esprit.storeyc.dto.CategoryDto;
 import org.esprit.storeyc.entities.Category;
+import org.esprit.storeyc.entities.Product;
 import org.esprit.storeyc.repositories.CategoryRepository;
+import org.esprit.storeyc.repositories.ProductRepository;
 import org.esprit.storeyc.services.interfaces.ICategoryService;
 import org.esprit.storeyc.validator.CategoryValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +21,8 @@ public class CategoryServiceImpl implements ICategoryService {
 
     @Autowired
     private CategoryRepository categoryRepository;
-
+    @Autowired
+    ProductRepository productRepository;
 
     @Override
     public CategoryDto createCategory(CategoryDto categoryDto) {
@@ -103,7 +106,18 @@ public class CategoryServiceImpl implements ICategoryService {
         }
         return categoryDtos;
     }
+    @Override
+    public void assignProductToCategory(Integer productId, Integer categoryId) {
+        Product product = productRepository.findById(productId).orElse(null);
+        Category category = categoryRepository.findById(categoryId).orElse(null);
 
+        if (product == null || category == null) {
+            log.info("cant assignProductToCategory");
+            return;
+        }
+        product.setCategory(category);
+        productRepository.save(product);
+    }
 //    @Override
 //    public List<CategoryDto> filterCategoriesByTypeAndName(String categoryType, String categoryName) {
 //        List<Category> categories = categoryRepository.findByCategoryDtoCategoryTypeAndNameContainingIgnoreCase(categoryType, categoryName);

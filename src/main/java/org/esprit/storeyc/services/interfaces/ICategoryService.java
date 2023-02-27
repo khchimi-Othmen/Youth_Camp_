@@ -12,5 +12,7 @@ public interface ICategoryService {
      List<CategoryDto> getAllCategories() ;
      List<CategoryDto> getCategoriesByType(String categoryType) ;
      List<CategoryDto> searchCategoriesByName(String categoryName) ;
+     public void assignProductToCategory(Integer productId, Integer categoryId) ;
+     //todo désaffecter
 
 }

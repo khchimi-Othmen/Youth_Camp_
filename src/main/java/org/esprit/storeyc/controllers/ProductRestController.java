@@ -1,72 +1,111 @@
 package org.esprit.storeyc.controllers;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.esprit.storeyc.dto.ProductDto;
 import org.esprit.storeyc.services.interfaces.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
+@Tag(name = "products Management")
 @RestController
-@RequestMapping("/api/products")
+@RequestMapping("/products")
 public class ProductRestController {
 
 	@Autowired
 	private IProductService productService;
 
-//	@PostMapping("/createProduct")
-//	public ProductDto createProduct(@RequestBody ProductDto productDto) {
-//		return productService.createProduct(productDto);
-//	}
-		@PostMapping("/createProduct")
-		public ResponseEntity<ProductDto> createProduct(@RequestBody ProductDto productDto) {
-		ProductDto createdProduct = productService.createProduct(productDto);
-		if (createdProduct != null) {
-			return new ResponseEntity<>(createdProduct, HttpStatus.CREATED);
-		} else {
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		}
+	@PostMapping("/createProduct")
+	public ProductDto createProduct(@RequestBody ProductDto productDto) {
+		return productService.createProduct(productDto);
 	}
 
 	@PutMapping("/updateProduct")
-	public ResponseEntity<Void> updateProduct(@RequestBody ProductDto updatedProductDto) {
+	public void updateProduct(@RequestBody ProductDto updatedProductDto) {
 		productService.updateProduct(updatedProductDto);
-		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@DeleteMapping("/deleteProduct/{id}")
-	public ResponseEntity<Void> deleteProduct(@PathVariable("id") Integer productId) {
+	public void deleteProduct(@PathVariable("id") Integer productId) {
 		productService.deleteProduct(productId);
-		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@GetMapping("/getProductById/{id}")
-	public ResponseEntity<ProductDto> getProductById(@PathVariable("id") Integer productId) {
-		ProductDto productDto = productService.getProductById(productId);
-		if (productDto != null) {
-			return new ResponseEntity<>(productDto, HttpStatus.OK);
-		} else {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
+	public ProductDto getProductById(@PathVariable("id") Integer productId) {
+		return productService.getProductById(productId);
 	}
 
 	@GetMapping("/getAllProducts")
-	public ResponseEntity<List<ProductDto>> getAllProducts() {
-		List<ProductDto> products = productService.getAllProducts();
-		return new ResponseEntity<>(products, HttpStatus.OK);
+	public List<ProductDto> getAllProducts() {
+		return productService.getAllProducts();
 	}
-
-//	@GetMapping("/filterProductsByCategory/{category}")
-//	public ResponseEntity<List<ProductDto>> filterProductsByCategory(@PathVariable("category") CaType category) {
-//		List<ProductDto> products = productService.filterProductsByCategory(category);
-//		return new ResponseEntity<>(products, HttpStatus.OK);
-//	}
 
 	@GetMapping("/searchProductsByName")
-	public ResponseEntity<List<ProductDto>> searchProductsByName(@RequestParam("name") String name) {
-		List<ProductDto> products = productService.searchProductsByName(name);
-		return new ResponseEntity<>(products, HttpStatus.OK);
+	public List<ProductDto> searchProductsByName(@RequestParam("name") String name) {
+		return productService.searchProductsByName(name);
 	}
+
+
+//
+//	@GetMapping("/getProductsByPromotion")
+//	public List<ProductDto> getProductsByPromotion(@RequestParam("promotionName") String promotionName) {
+//		return productService.getProductsByPromotion(promotionName);
+//	}
+//
+//	@PutMapping("/{productId}/addPromotionToProduct")
+//	public void addPromotionToProduct(@PathVariable("productId") Integer productId, @RequestParam("promotionName") String promotionName) {
+//		productService.addPromotionToProduct(productId, promotionName);
+//	}
+//	@PutMapping("/{productId}/{discount}/applyDiscountToProduct")
+//	public void applyDiscountToProduct(@PathVariable("productId") Integer productId, @PathVariable("discount") BigDecimal discount) {
+//		productService.applyDiscountToProduct(productId, discount);
+//	}
+//
+//	@PutMapping("/{productId}/applyPercentageDiscountToProduct")
+//	public void applyPercentageDiscountToProduct(@PathVariable Integer productId, @RequestParam BigDecimal percentageDiscount) {
+//		productService.applyPercentageDiscountToProduct(productId, percentageDiscount);
+//	}
+//
+//
+//	@DeleteMapping("/{productId}/removePromotionFromProduct")
+//	public void removePromotionFromProduct(@PathVariable("productId") Integer productId) {
+//		productService.removePromotionFromProduct(productId);
+//	}
+//
+//	@PostMapping("/addRental")
+//	public ProductDto addRental(@RequestBody ProductDto productDto) {
+//		return productService.addRental(productDto);
+//	}
+//
+//	@PostMapping("/addSale")
+//	public ProductDto addSale(@RequestBody ProductDto productDto) {
+//		return productService.addSale(productDto);
+//	}
+//
+//	@GetMapping("/getAllRentals")
+//	public List<ProductDto> getAllRentals() {
+//		return productService.getAllRentals();
+//	}
+//
+//	@GetMapping("/getAllSales")
+//	public List<ProductDto> getAllSales() {
+//		return productService.getAllSales();
+//	}
+//
+//	@DeleteMapping("/deleteRental/{rentalId}")
+//	public void deleteRental(@PathVariable Integer rentalId) {
+//		productService.deleteRental(rentalId);
+//	}
+//
+//	@DeleteMapping("/deleteSale/{saleId}")
+//	public void deleteSale(@PathVariable Integer saleId) {
+//		productService.deleteSale(saleId);
+//	}
+//
+//	@PostMapping("/{productId}/processPayment")
+//	public void processPayment(@PathVariable("productId") Integer productId, @RequestParam("amount") BigDecimal amount) {
+//		productService.processPayment(productId, amount);
+//	}
 }

@@ -24,7 +24,7 @@ public class Product implements Serializable {
     private String producer;
     private Boolean available;
     private String promotion; // add promotion attribute
-    private String promotionName;
+//    private String promotionName;
     private Integer quantityAvailable; // to track how many of the product are currently available for sale/rental.
     private Boolean isRental; //  a boolean flag to indicate whether the product is available for rental or just for sale
     private BigDecimal rentalPrice; // the price of renting the product (if applicable).

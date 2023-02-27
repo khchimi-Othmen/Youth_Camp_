@@ -21,11 +21,12 @@ public class ProductDto {
     private String producer;
     private Boolean available;
     private String promotion; // add promotion attribute
-    private String promotionName; // add promotionName attribute
+//    private String promotionName; // add promotionName attribute
     private Integer quantityAvailable; // add quantity available attribute
     private Boolean isRental; // add is rental attribute
     private BigDecimal rentalPrice; // add rental price attribute
     private Integer rentalDuration; // add rental duration attribute
+    @JsonIgnore
     private Category category;
 
     @JsonIgnore
@@ -48,7 +49,7 @@ public class ProductDto {
                 .available(product.getAvailable())
                 .category(product.getCategory())
                 .promotion(product.getPromotion())
-                .promotionName(product.getPromotionName())
+//                .promotionName(product.getPromotionName())
                 //.ratings(ratingDtos)
                 .quantityAvailable(product.getQuantityAvailable())
                 .isRental(product.getIsRental())
@@ -70,7 +71,7 @@ public class ProductDto {
         product.setAvailable(productDto.getAvailable());
         product.setCategory(productDto.getCategory());
         product.setPromotion(productDto.getPromotion());
-        product.setPromotionName(productDto.getPromotionName());
+//        product.setPromotionName(productDto.getPromotionName());
         //        List<Rating> ratings = productDto.getRatings().stream()
 //                .map(RatingDto::toEntity)
 //                .collect(Collectors.toList());

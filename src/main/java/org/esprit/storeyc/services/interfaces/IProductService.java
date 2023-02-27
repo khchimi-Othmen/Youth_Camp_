@@ -14,10 +14,15 @@ public interface IProductService {
     List<ProductDto> getAllProducts();
     List<ProductDto> searchProductsByName(String name);
 
-    //the Management of promotions/offers
+        //the Management of promotions/offers
      List<ProductDto> getProductsByPromotion(String promotionName);
      void addPromotionToProduct(Integer productId, String promotionName);
      void removePromotionFromProduct(Integer productId) ;
+     void applyDiscountToProduct(Integer productId, BigDecimal discount) ;
+     void applyPercentageDiscountToProduct(Integer productId, BigDecimal percentageDiscount) ;
+//  todo  applyPromotionDiscount.
+
+
 
     // Management of loyalty points
     void addLoyaltyPointsToUser(Integer userId, Float points);
@@ -26,8 +31,8 @@ public interface IProductService {
     //Management of tool sales/rentals:
     List<ProductDto> getAllRentals();
     List<ProductDto> getAllSales();
-    ProductDto addRental(ProductDto productDto);
-    ProductDto addSale(ProductDto productDto);
+    public ProductDto addRental(Integer productId) ;
+    public ProductDto addSale(Integer productId) ;
     void deleteRental(Integer rentalId);
     void deleteSale(Integer saleId);
 

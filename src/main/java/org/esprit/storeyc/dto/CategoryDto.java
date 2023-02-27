@@ -1,5 +1,6 @@
 package org.esprit.storeyc.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.esprit.storeyc.entities.Category;
 import org.esprit.storeyc.entities.Command;
@@ -19,7 +20,7 @@ public class CategoryDto {
     private String description;
 
     private String categoryType;
-
+@JsonIgnore
     private List<Product> products;
 
     public static CategoryDto fromEntity(Category category) {
