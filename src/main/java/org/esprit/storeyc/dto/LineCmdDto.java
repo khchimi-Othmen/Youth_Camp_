@@ -13,8 +13,9 @@ import java.math.BigDecimal;
 @Builder
 public class LineCmdDto {
     private Integer id;
-    private BigDecimal quantite;
-    private BigDecimal prixUnitaire;
+    private Integer quantite;
+    private BigDecimal total;
+    @JsonIgnore
     private ProductDto productDto;
     @JsonIgnore
     private CommandDto commandDto;
@@ -27,7 +28,7 @@ public class LineCmdDto {
         return LineCmdDto.builder()
                 .id(lineCmd.getId())
                 .quantite(lineCmd.getQuantite())
-                .prixUnitaire(lineCmd.getPrixUnitaire())
+                .total(lineCmd.getTotal())
                 .build();
     }
 
@@ -38,7 +39,7 @@ public class LineCmdDto {
         LineCmd lineCmd = new LineCmd();
         lineCmd.setId(lineCmdDto.getId());
         lineCmd.setQuantite(lineCmdDto.getQuantite());
-        lineCmd.setPrixUnitaire(lineCmdDto.getPrixUnitaire());
+        lineCmd.setTotal(lineCmdDto.getTotal());
         return lineCmd;
     }
 }

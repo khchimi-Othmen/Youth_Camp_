@@ -1,5 +1,9 @@
 package org.esprit.storeyc.entities;
 
 public enum CmdType {
-    DELIVERED,STILL,CANCELED
-}
+    CREATED,
+    PENDING,
+    CONFIRMED,
+
+    DELIVERED,
+    CANCELLED}

@@ -17,8 +17,9 @@ public class LineCmd implements Serializable {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Integer id;
-    private BigDecimal quantite;
-    private BigDecimal prixUnitaire;
+    private Integer quantite;
+    private BigDecimal total;
+
 
     @ManyToOne
     @JsonIgnore

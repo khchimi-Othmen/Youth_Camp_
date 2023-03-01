@@ -5,7 +5,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.esprit.storeyc.entities.Category;
 import org.esprit.storeyc.entities.Product;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 
 @Getter
@@ -25,7 +29,10 @@ public class ProductDto {
     private Integer quantityAvailable; // add quantity available attribute
     private Boolean isRental; // add is rental attribute
     private BigDecimal rentalPrice; // add rental price attribute
-    private Integer rentalDuration; // add rental duration attribute
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate rentalStartDate;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate rentalEndDate;
     @JsonIgnore
     private Category category;
 
@@ -54,7 +61,8 @@ public class ProductDto {
                 .quantityAvailable(product.getQuantityAvailable())
                 .isRental(product.getIsRental())
                 .rentalPrice(product.getRentalPrice())
-                .rentalDuration(product.getRentalDuration())
+                .rentalStartDate(product.getRentalStartDate())
+                .rentalEndDate(product.getRentalEndDate())
                 .build();
     }
 
@@ -79,7 +87,8 @@ public class ProductDto {
         product.setQuantityAvailable(productDto.getQuantityAvailable());
         product.setIsRental(productDto.getIsRental());
         product.setRentalPrice(productDto.getRentalPrice());
-        product.setRentalDuration(productDto.getRentalDuration());
+        product.setRentalStartDate(productDto.getRentalStartDate());
+        product.setRentalEndDate(productDto.getRentalEndDate());
         return product;
     }
 }

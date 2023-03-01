@@ -1,10 +1,8 @@
 package org.esprit.storeyc.services.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.esprit.storeyc.entities.Category;
 import org.esprit.storeyc.entities.User;
 import org.esprit.storeyc.dto.ProductDto;
-import org.esprit.storeyc.dto.UserDto;
 import org.esprit.storeyc.repositories.CategoryRepository;
 import org.esprit.storeyc.repositories.UserRepository;
 import org.esprit.storeyc.validator.ProductValidator;
@@ -270,6 +268,7 @@ public class ProductServiceImpl implements IProductService {
             log.error("Product with ID: " + productId + " not found");
         }
     }
+
 
 
 

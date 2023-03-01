@@ -18,9 +18,8 @@ public class CategoryDto {
     private Integer categoryId;
     private String name;
     private String description;
-
     private String categoryType;
-@JsonIgnore
+    @JsonIgnore
     private List<Product> products;
 
     public static CategoryDto fromEntity(Category category) {

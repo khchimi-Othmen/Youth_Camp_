@@ -23,10 +23,13 @@ public class Command implements Serializable {
     @Enumerated(EnumType.STRING)
     private PMType paymentMethod;
     @Enumerated(EnumType.STRING)
-    private CmdType commmandType;
+    private CmdType commmandType;//CommandStatus
     private BigDecimal weight;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate deliveryDate;//duration<;
+//    @Enumerated(EnumType.STRING)
+//    @Column(name = "status")
+//    private CommandStatus status;
 
     @ManyToOne
     @JsonIgnore
@@ -39,7 +42,7 @@ public class Command implements Serializable {
     @ManyToOne
     @JsonIgnore
     private User user;
-
+    //todo ask??? relation
     @OneToMany(mappedBy = "command")
     @JsonIgnore
     private List<LineCmd> commandLines;

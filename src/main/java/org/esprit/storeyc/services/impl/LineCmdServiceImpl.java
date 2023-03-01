@@ -1,7 +1,7 @@
 package org.esprit.storeyc.services.impl;
 
+
 import lombok.extern.slf4j.Slf4j;
-import org.esprit.storeyc.dto.LineCmdDto;
 import org.esprit.storeyc.entities.Command;
 import org.esprit.storeyc.entities.LineCmd;
 import org.esprit.storeyc.entities.Product;
@@ -12,57 +12,73 @@ import org.esprit.storeyc.services.interfaces.ILineCmdService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
-@Slf4j
+
 @Service
+@Slf4j
 public class LineCmdServiceImpl implements ILineCmdService {
 
     @Autowired
     private LineCmdRepository lineCmdRepository;
-
+    @Autowired
+    private ProductRepository productRepository;
     @Autowired
     private CommandRepository commandRepository;
 
-    @Autowired
-    private ProductRepository productRepository;
+    @Override
+    public LineCmd createLineCmdAndAssignProduct(Integer productId, Integer quantite) {
+        LineCmd lineCmd = new LineCmd();
+        lineCmd.setQuantite(quantite);
+        Product product = productRepository.findById(productId).orElse(null);
+        lineCmd.setProduct(product);
+        lineCmdRepository.save(lineCmd);
+        return lineCmd;
+    }
+
 
     @Override
-    public LineCmdDto createLineCmd(LineCmdDto lineCmdDto) {
-        log.info("Creating new LineCmd: {}", lineCmdDto);
-
-        LineCmd lineCmd = new LineCmd();
-        lineCmd.setQuantite(lineCmdDto.getQuantite());
-        lineCmd.setPrixUnitaire(lineCmdDto.getPrixUnitaire());
-
-        Optional<Command> optionalCommand = commandRepository.findById(lineCmdDto.getId());
-        if (optionalCommand.isPresent()) {
-            lineCmd.setCommand(optionalCommand.get());
+    public void assignCommandToLineCmd(Integer lineCmdId, Integer commandId) {
+        Optional<LineCmd> optionalLineCmd = lineCmdRepository.findById(lineCmdId);
+        Optional<Command> optionalCommand = commandRepository.findById(commandId);
+        if (optionalLineCmd.isPresent() && optionalCommand.isPresent()) {
+            LineCmd lineCmd = optionalLineCmd.get();
+            Command command = optionalCommand.get();
+            lineCmd.setCommand(command);
+            lineCmdRepository.save(lineCmd);
         } else {
-            log.warn("Command with id {} not found, cannot create LineCmd", lineCmdDto.getId());
-            return null;
-        }
-
-        Optional<Product> optionalProduct = productRepository.findById(lineCmdDto.getId());
-        if (optionalProduct.isPresent()) {
-            lineCmd.setProduct(optionalProduct.get());
-        } else {
-            log.warn("Product with id {} not found, cannot create LineCmd", lineCmdDto.getId());
-            return null;
-        }
-
-        lineCmdRepository.save(lineCmd);
-
-        LineCmdDto createdLineCmdDto = new LineCmdDto();
-        createdLineCmdDto.setId(lineCmd.getId());
-        createdLineCmdDto.setQuantite(lineCmd.getQuantite());
-        createdLineCmdDto.setPrixUnitaire(lineCmd.getPrixUnitaire());
-        createdLineCmdDto.setId(lineCmd.getCommand().getCommandeNumber());
-        createdLineCmdDto.setId(lineCmd.getProduct().getProductId());
-
-        log.info("New LineCmd created: {}", createdLineCmdDto);
-
-        return createdLineCmdDto;
+        log.error("Line command or command not found.");
+            }
     }
-}
 
+
+    @Override
+    public BigDecimal getTotalForLineCmd(Integer lineCmdId) {
+        LineCmd lineCmd = lineCmdRepository.findById(lineCmdId).orElse(null);
+        if (lineCmd == null) {
+            throw new IllegalArgumentException("Invalid line command id: " + lineCmdId);
+        }
+
+        BigDecimal pricePerUnit = lineCmd.getProduct().getPrice();
+        System.out.println("-----pricePerUnit"+pricePerUnit);
+        BigDecimal quantity = BigDecimal.valueOf(lineCmd.getQuantite());
+        System.out.println("-----quantity"+quantity);
+        BigDecimal total = pricePerUnit.multiply(quantity);
+        System.out.println("-----"+total);
+        lineCmd.setTotal(total);
+        lineCmdRepository.save(lineCmd);
+        return total;
+    }
+
+
+//    @Override
+//    public void updateQuantityAndTotal(LineCmd lineCmd, BigDecimal newQuantity) {
+//        BigDecimal pricePerUnit = lineCmd.getProduct().getPrice();
+//        BigDecimal newTotal = pricePerUnit.multiply(newQuantity);
+//
+//        lineCmd.setQuantite(newQuantity);
+//        lineCmd.setTotal(newTotal);
+//    }
+
+}
