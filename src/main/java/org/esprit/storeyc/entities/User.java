@@ -2,9 +2,12 @@ package org.esprit.storeyc.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -23,6 +26,10 @@ public class User implements Serializable {
     private String email;
     private String motDePasse;
     private Float loyaltyPts;
+    private Float discount;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate loyaltyPointsExpireDate;
+
 
     @OneToMany
     @JsonIgnore

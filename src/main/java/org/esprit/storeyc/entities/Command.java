@@ -26,19 +26,18 @@ public class Command implements Serializable {
     private CmdType commmandType;//CommandStatus
     private BigDecimal weight;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate deliveryDate;//duration<;
-//    @Enumerated(EnumType.STRING)
-//    @Column(name = "status")
-//    private CommandStatus status;
+    private LocalDate deliveryDate;//duration<;howa ly ybda ya7sseb mnou date mta3 lkre
+    private  BigDecimal totalC;
+    private BigDecimal discountAmount;
+
 
     @ManyToOne
     @JsonIgnore
     private Donation donation;
 
-    @ManyToOne
+    @OneToOne
     @JsonIgnore
     private Delivery delivery;
-
     @ManyToOne
     @JsonIgnore
     private User user;

@@ -1,9 +1,11 @@
 package org.esprit.storeyc.services.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.esprit.storeyc.entities.LineCmd;
 import org.esprit.storeyc.entities.User;
 import org.esprit.storeyc.dto.ProductDto;
 import org.esprit.storeyc.repositories.CategoryRepository;
+import org.esprit.storeyc.repositories.LineCmdRepository;
 import org.esprit.storeyc.repositories.UserRepository;
 import org.esprit.storeyc.validator.ProductValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,8 @@ import org.esprit.storeyc.repositories.ProductRepository;
 import org.esprit.storeyc.services.interfaces.IProductService;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +33,9 @@ public class ProductServiceImpl implements IProductService {
 
     @Autowired
     CategoryRepository categoryRepository;
+
+    @Autowired
+    LineCmdRepository lineCmdRepository;
 
 
     @Override
@@ -217,17 +224,15 @@ public class ProductServiceImpl implements IProductService {
         return null;
     }
 
-    @Override
-    public ProductDto addSale(Integer productId) {
-        Optional<Product> optionalProduct = productRepository.findById(productId);
-        if (optionalProduct.isPresent()) {
-            Product product = optionalProduct.get();
-            product.setIsRental(false);
-            productRepository.save(product);
-            return ProductDto.fromEntity(product);
-        }
-        return null;
-    }
+
+@Override
+public BigDecimal calculateRentalProductTotal(Integer productId, Integer rentalDays, Integer requestedQuantity) {
+    Product product = productRepository.findById(productId).orElse(null);
+    BigDecimal rentalPricePerDay = product.getPrice();
+    BigDecimal rentalProductTotal = rentalPricePerDay.multiply(BigDecimal.valueOf(rentalDays)).multiply(BigDecimal.valueOf(requestedQuantity));
+    log.info("Total cost for this rental product line: " + rentalProductTotal);
+    return rentalProductTotal;
+}
 
 
     @Override
@@ -251,6 +256,39 @@ public class ProductServiceImpl implements IProductService {
             }
         }
     }
+
+    @Override
+    public BigDecimal redeemPointsForDiscount(User user, BigDecimal purchaseAmount) {
+        BigDecimal discountAmount = BigDecimal.ZERO;
+
+        // Define conversion rate for points to dollars
+        BigDecimal pointConversionRate = BigDecimal.valueOf(0.01);
+
+        // Calculate maximum points that can be redeemed
+        Float maxPoints = user.getLoyaltyPts();
+
+        // Calculate points to dollars conversion
+        BigDecimal pointsToDollars = BigDecimal.valueOf(maxPoints).multiply(pointConversionRate);
+
+        // Check if user has enough points to redeem
+        if (pointsToDollars.compareTo(purchaseAmount) <= 0) {
+            // Calculate discount amount and deduct points from user's loyalty points balance
+            discountAmount = pointsToDollars;
+            user.setLoyaltyPts((float) 0);
+        } else {
+            // Calculate discount amount and update user's loyalty points balance
+            discountAmount = purchaseAmount;
+            Integer pointsToRedeem = purchaseAmount.divide(pointConversionRate, RoundingMode.DOWN).intValue();
+            user.setLoyaltyPts(maxPoints - pointsToRedeem);
+        }
+
+        // Save user's updated loyalty points balance
+        userRepository.save(user);
+
+        return discountAmount;
+    }
+
+
 
     @Override
     public void processPayment(Integer productId, BigDecimal amount) {

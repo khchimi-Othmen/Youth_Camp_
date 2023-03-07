@@ -15,6 +15,8 @@ public class LineCmdDto {
     private Integer id;
     private Integer quantite;
     private BigDecimal total;
+    private Integer nbrRentalPerDays;
+
     @JsonIgnore
     private ProductDto productDto;
     @JsonIgnore
@@ -29,6 +31,7 @@ public class LineCmdDto {
                 .id(lineCmd.getId())
                 .quantite(lineCmd.getQuantite())
                 .total(lineCmd.getTotal())
+                .nbrRentalPerDays(lineCmd.getNbrRentalPerDays())
                 .build();
     }
 
@@ -40,6 +43,7 @@ public class LineCmdDto {
         lineCmd.setId(lineCmdDto.getId());
         lineCmd.setQuantite(lineCmdDto.getQuantite());
         lineCmd.setTotal(lineCmdDto.getTotal());
+        lineCmd.setNbrRentalPerDays(lineCmdDto.getNbrRentalPerDays());
         return lineCmd;
     }
 }

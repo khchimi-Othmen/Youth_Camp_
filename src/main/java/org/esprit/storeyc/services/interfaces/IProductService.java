@@ -2,6 +2,9 @@ package org.esprit.storeyc.services.interfaces;
 
 import org.esprit.storeyc.dto.ProductDto;
 import org.esprit.storeyc.dto.UserDto;
+import org.esprit.storeyc.entities.LineCmd;
+import org.esprit.storeyc.entities.Product;
+import org.esprit.storeyc.entities.User;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -31,12 +34,14 @@ public interface IProductService {
     //Management of tool sales/rentals:
     List<ProductDto> getAllRentals();
     List<ProductDto> getAllSales();
-    public ProductDto addRental(Integer productId) ;
-    public ProductDto addSale(Integer productId) ;
+    ProductDto addRental(Integer productId) ;
+    BigDecimal calculateRentalProductTotal(Integer productId, Integer rentalDays, Integer requestedQuantity) ;
     void deleteRental(Integer rentalId);
     void deleteSale(Integer saleId);
+    public BigDecimal redeemPointsForDiscount(User user, BigDecimal purchaseAmount) ;
 
-    // methods for payment management
+
+        // methods for payment management
     void processPayment(Integer productId, BigDecimal amount);
 
 }

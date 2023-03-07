@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 
@@ -28,9 +29,10 @@ public class LineCmdServiceImpl implements ILineCmdService {
     private CommandRepository commandRepository;
 
     @Override
-    public LineCmd createLineCmdAndAssignProduct(Integer productId, Integer quantite) {
+    public LineCmd createLineCmdAndAssignProduct(Integer productId, Integer quantite,Integer nbrRentalPerDays) {
         LineCmd lineCmd = new LineCmd();
         lineCmd.setQuantite(quantite);
+        lineCmd.setNbrRentalPerDays(nbrRentalPerDays);
         Product product = productRepository.findById(productId).orElse(null);
         lineCmd.setProduct(product);
         lineCmdRepository.save(lineCmd);
@@ -72,13 +74,27 @@ public class LineCmdServiceImpl implements ILineCmdService {
     }
 
 
-//    @Override
-//    public void updateQuantityAndTotal(LineCmd lineCmd, BigDecimal newQuantity) {
-//        BigDecimal pricePerUnit = lineCmd.getProduct().getPrice();
-//        BigDecimal newTotal = pricePerUnit.multiply(newQuantity);
-//
-//        lineCmd.setQuantite(newQuantity);
-//        lineCmd.setTotal(newTotal);
-//    }
+    @Override
+    public void updateQuantityAndTotal(Integer idLinecmd, Integer productId, Integer newQuantity, Integer nbrRentalPerDays) {
+        LineCmd lineCmd = lineCmdRepository.findById(idLinecmd).orElseThrow(() -> new NoSuchElementException("LineCmd not found with id " + idLinecmd));
+        Product product = productRepository.findById(productId).orElse(null);
+
+        assert product != null;
+        BigDecimal rentalPrice = product.getPrice();
+        BigDecimal total = rentalPrice.multiply(BigDecimal.valueOf(nbrRentalPerDays == null ? 1 : nbrRentalPerDays));
+        total = total.multiply(BigDecimal.valueOf(newQuantity));
+
+        lineCmd.setProduct(product);
+        lineCmd.setQuantite(newQuantity);
+        lineCmd.setNbrRentalPerDays(nbrRentalPerDays == null ? 1 : nbrRentalPerDays);
+        lineCmd.setTotal(total);
+
+        lineCmdRepository.save(lineCmd);
+    }
+
+
+
+
+
 
 }

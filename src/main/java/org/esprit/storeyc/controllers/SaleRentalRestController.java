@@ -22,10 +22,10 @@ public class SaleRentalRestController {
 		return productService.addRental(productId);
 	}
 
-	@PostMapping("/{productId}/addSale")
-	public ProductDto addSale(@PathVariable("productId") Integer productId) {
-		return productService.addSale(productId);
-	}
+//	@PostMapping("/{productId}/addSale")
+//	public ProductDto addSale(@PathVariable("productId") Integer productId) {
+//		return productService.addSale(productId);
+//	}
 
 	@GetMapping("/getAllRentals")
 	public List<ProductDto> getAllRentals() {
@@ -50,5 +50,12 @@ public class SaleRentalRestController {
 	@PostMapping("/{productId}/processPayment")
 	public void processPayment(@PathVariable("productId") Integer productId, @RequestParam("amount") BigDecimal amount) {
 		productService.processPayment(productId, amount);
+	}
+
+	@GetMapping("/calculateRentalProductTotal/{productId}/{rentalDays}/{requestedQuantity}")
+	public BigDecimal calculateRentalProductTotal(@PathVariable("productId") Integer productId,
+												  @PathVariable("rentalDays") Integer rentalDays,
+												  @PathVariable("requestedQuantity")Integer requestedQuantity) {
+		return productService.calculateRentalProductTotal(productId, rentalDays,requestedQuantity);
 	}
 }

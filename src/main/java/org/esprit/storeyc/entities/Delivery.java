@@ -1,6 +1,7 @@
 package org.esprit.storeyc.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -26,8 +27,8 @@ public class Delivery implements Serializable {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate deliveryDate;
 
-    @OneToMany
-    private List<Command> commands;
-
+    @OneToOne(mappedBy = "delivery")
+    @JsonIgnore
+    private Command command;
 
 }

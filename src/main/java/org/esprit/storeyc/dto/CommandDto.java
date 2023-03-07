@@ -28,7 +28,11 @@ public class CommandDto {
     private BigDecimal weight;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate deliveryDate;
-//    private CommandStatus status;
+    private  BigDecimal totalC;
+    private BigDecimal discountAmount;
+
+
+
     @JsonIgnore
     private User user;
 
@@ -44,7 +48,8 @@ public class CommandDto {
                 .weight(command.getWeight())
                 .deliveryDate(command.getDeliveryDate())
                 .user(command.getUser())
-//                .status(command.getStatus())
+                .totalC(command.getTotalC())
+                .discountAmount(command.getDiscountAmount())
                 .build();
     }
 
@@ -59,7 +64,8 @@ public class CommandDto {
         command.setWeight(commandDto.getWeight());
         command.setDeliveryDate(commandDto.getDeliveryDate());
         command.setUser(commandDto.getUser());
-//        command.setStatus(commandDto.getStatus());
+        command.setTotalC(command.getTotalC());
+        command.setDiscountAmount(command.getDiscountAmount());
         return command;
     }
 }

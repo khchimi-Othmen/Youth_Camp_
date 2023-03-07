@@ -19,6 +19,8 @@ public class LineCmd implements Serializable {
     private Integer id;
     private Integer quantite;
     private BigDecimal total;
+    private Integer nbrRentalPerDays;
+
 
 
     @ManyToOne

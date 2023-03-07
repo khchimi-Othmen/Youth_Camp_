@@ -6,6 +6,7 @@ import org.esprit.storeyc.entities.Command;
 import org.esprit.storeyc.services.impl.CommandServiceImpl;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Tag(name = "Command Management")
@@ -52,7 +53,27 @@ public class CommandRestController {
 	public List<CommandDto> getAllCommands() {
 		return commandService.getAllCommands();
 	}
-	@PostMapping("/commands/{commandId}/finalize")
+
+	@PutMapping("/assignCommandToUser/{commandId}/{userId}")
+	public void assignCommandToUser(@PathVariable Integer commandId,@PathVariable Integer userId) {
+		commandService.assignCommandToUser(commandId,userId);
+	}
+
+	@PutMapping("/assignDeliveryToCommand/{deliveryId}/{commandId}")
+	public void assignDeliveryToCommand(@PathVariable Integer deliveryId,@PathVariable Integer commandId) {
+		commandService.assignDeliveryToCommand(deliveryId,commandId);
+
+	}
+
+
+		@PostMapping("/calculateTotalCostPerCommand/{commandId}")
+	public String calculateTotalCostPerCommand(@PathVariable Integer commandId) {
+		return commandService.calculateTotalCostPerCommand(commandId);
+
+	}
+
+
+		@PostMapping("/commands/{commandId}/finalize")
 	public String finalizeCommand(@PathVariable Integer commandId) {
 		return commandService.finalizeCommand(commandId);
 	}

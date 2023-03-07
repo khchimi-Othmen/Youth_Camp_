@@ -11,10 +11,10 @@ import org.esprit.storeyc.entities.Product;
 
 public interface ILineCmdService {
 
-     LineCmd createLineCmdAndAssignProduct(Integer productId, Integer quantite) ;
+     LineCmd createLineCmdAndAssignProduct(Integer productId, Integer quantite,Integer nbrRentalPerDays) ;
 
      void assignCommandToLineCmd(Integer lineCmdId, Integer commandId) ;
-//     void updateQuantityAndTotal(LineCmd lineCmd, BigDecimal quantity) ;
+     public void updateQuantityAndTotal(Integer idLinecmd, Integer productId, Integer newQuantity, Integer nbrRentalPerDays) ;
      BigDecimal getTotalForLineCmd(Integer lineCmdId) ;
 
      }
