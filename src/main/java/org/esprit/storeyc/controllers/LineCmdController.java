@@ -17,7 +17,7 @@ public class LineCmdController {
     private ILineCmdService lineCmdService;
 
     @PostMapping("/createLineCmdAndAssignProduct/{productId}/{quantite}/{nbrRentalPerDays}")
-    public LineCmd createLineCmdAndAssignProduct( @PathVariable Integer productId,
+    public String createLineCmdAndAssignProduct( @PathVariable Integer productId,
                                                   @PathVariable Integer quantite,
                                                   @RequestParam(required = false, defaultValue = "1") Integer nbrRentalPerDays) {
         return lineCmdService.createLineCmdAndAssignProduct(productId, quantite, nbrRentalPerDays);
@@ -35,9 +35,9 @@ public class LineCmdController {
 
 
     @PutMapping("/updateQuantityAndTotal/{idLinecmd}/{productId}/{newQuantity}/{nbrRentalPerDays}")
-        public void updateQuantityAndTotal(@PathVariable Integer idLinecmd,@PathVariable Integer productId,
+        public String updateQuantityAndTotal(@PathVariable Integer idLinecmd,@PathVariable Integer productId,
                                        @PathVariable Integer newQuantity,
                                        @RequestParam(required = false, defaultValue = "1") Integer nbrRentalPerDays) {
-        lineCmdService.updateQuantityAndTotal(idLinecmd, productId, newQuantity, nbrRentalPerDays);
+        return lineCmdService.updateQuantityAndTotal(idLinecmd, productId, newQuantity, nbrRentalPerDays);
     }
 }

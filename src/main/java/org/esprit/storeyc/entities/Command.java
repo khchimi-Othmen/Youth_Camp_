@@ -29,11 +29,11 @@ public class Command implements Serializable {
     private LocalDate deliveryDate;//duration<;howa ly ybda ya7sseb mnou date mta3 lkre
     private  BigDecimal totalC;
     private BigDecimal discountAmount;
+    private Boolean donation;
+    private String ref=null;
 
 
-    @ManyToOne
-    @JsonIgnore
-    private Donation donation;
+
 
     @OneToOne
     @JsonIgnore
@@ -46,6 +46,9 @@ public class Command implements Serializable {
     @JsonIgnore
     private List<LineCmd> commandLines;
 
-
+    /*The fetch attribute specifies that the relationship should be lazily loaded, which means that the Charity entity will be loaded only when needed.*/
+    @ManyToOne
+    @JsonIgnore
+    private Charity charity;
 
 }

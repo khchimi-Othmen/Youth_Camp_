@@ -6,7 +6,6 @@ import org.esprit.storeyc.services.interfaces.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Tag(name = "products Management")
@@ -17,9 +16,11 @@ public class ProductRestController {
 	@Autowired
 	private IProductService productService;
 
-	@PostMapping("/createProduct")
-	public ProductDto createProduct(@RequestBody ProductDto productDto) {
-		return productService.createProduct(productDto);
+	@PostMapping("/createProductAndAssignToCategory/{categoryId}")
+	public ProductDto createProductAndAssignToCategory(@RequestBody ProductDto productDto,
+													   @PathVariable Integer categoryId
+													  /* @RequestParam(required = false, defaultValue = "false") boolean isRental*/) {
+		return productService.createProductAndAssignToCategory(productDto,categoryId);
 	}
 
 	@PutMapping("/updateProduct")

@@ -21,7 +21,11 @@ public class LineCmdDto {
     private ProductDto productDto;
     @JsonIgnore
     private CommandDto commandDto;
-
+    public LineCmdDto(ProductDto productDto, Integer quantite, Integer nbrRentalPerDays) {
+        this.productDto = productDto;
+        this.quantite = quantite;
+        this.nbrRentalPerDays = nbrRentalPerDays;
+    }
 
     public static LineCmdDto fromEntity(LineCmd lineCmd){
         if(lineCmd == null){

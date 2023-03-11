@@ -6,11 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.esprit.storeyc.entities.CmdType;
-import org.esprit.storeyc.entities.Command;
-import org.esprit.storeyc.entities.PMType;
+import org.esprit.storeyc.entities.*;
 
-import org.esprit.storeyc.entities.User;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
@@ -28,11 +25,11 @@ public class CommandDto {
     private BigDecimal weight;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate deliveryDate;
-    private  BigDecimal totalC;
-    private BigDecimal discountAmount;
+    private Boolean donation;
+    private String ref=null;
 
-
-
+    @JsonIgnore
+    private Charity charity;
     @JsonIgnore
     private User user;
 
@@ -47,9 +44,10 @@ public class CommandDto {
                 .commandType(command.getCommmandType())
                 .weight(command.getWeight())
                 .deliveryDate(command.getDeliveryDate())
+                .donation(command.getDonation())
                 .user(command.getUser())
-                .totalC(command.getTotalC())
-                .discountAmount(command.getDiscountAmount())
+                .charity(command.getCharity())
+                .ref(command.getRef())
                 .build();
     }
 
@@ -63,9 +61,10 @@ public class CommandDto {
         command.setCommmandType(commandDto.getCommandType());
         command.setWeight(commandDto.getWeight());
         command.setDeliveryDate(commandDto.getDeliveryDate());
+        command.setDonation(commandDto.getDonation());
         command.setUser(commandDto.getUser());
-        command.setTotalC(command.getTotalC());
-        command.setDiscountAmount(command.getDiscountAmount());
+        command.setCharity(commandDto.getCharity());
+        command.setRef(commandDto.getRef());
         return command;
     }
 }

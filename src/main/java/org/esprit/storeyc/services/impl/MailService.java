@@ -1,4 +1,4 @@
-//package org.esprit.storeyc.services.impl;
+package org.esprit.storeyc.services.impl;//package org.esprit.storeyc.services.impl;
 //
 //import org.springframework.mail.SimpleMailMessage;
 //import org.springframework.mail.javamail.JavaMailSender;

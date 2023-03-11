@@ -29,15 +29,25 @@ public class LineCmdServiceImpl implements ILineCmdService {
     private CommandRepository commandRepository;
 
     @Override
-    public LineCmd createLineCmdAndAssignProduct(Integer productId, Integer quantite,Integer nbrRentalPerDays) {
+    public String createLineCmdAndAssignProduct(Integer productId, Integer quantite, Integer nbrRentalPerDays) {
         LineCmd lineCmd = new LineCmd();
         lineCmd.setQuantite(quantite);
-        lineCmd.setNbrRentalPerDays(nbrRentalPerDays);
         Product product = productRepository.findById(productId).orElse(null);
-        lineCmd.setProduct(product);
-        lineCmdRepository.save(lineCmd);
-        return lineCmd;
+        if (product == null) {
+            return "Product not found.";
+        } else if (!product.getIsRental() && nbrRentalPerDays > 1) {
+            return "You can't assign this product because it is not for rental.";
+        } else if (nbrRentalPerDays < 0) {
+            return "Number of rental days cannot be negative.";
+        } else {
+            lineCmd.setNbrRentalPerDays(nbrRentalPerDays);
+            lineCmd.setProduct(product);
+            lineCmdRepository.save(lineCmd);
+            return "LineCmd created and product assigned successfully.";
+        }
     }
+
+
 
 
     @Override
@@ -54,43 +64,54 @@ public class LineCmdServiceImpl implements ILineCmdService {
             }
     }
 
+    @Override
+    public String updateQuantityAndTotal(Integer idLinecmd, Integer productId, Integer newQuantity, Integer nbrRentalPerDays) {
+        LineCmd lineCmd = lineCmdRepository.findById(idLinecmd).orElse(null);
+        Product product = productRepository.findById(productId).orElse(null);
+
+        if (lineCmd == null) {
+            return "Line command not found with id " + idLinecmd;
+        } else if (product == null) {
+            return "Product not found with id " + productId;
+        } else if (nbrRentalPerDays != null && nbrRentalPerDays < 0) {
+            return "Number of rental days cannot be negative.";
+        } else {
+            BigDecimal rentalPrice = product.getPrice();
+            BigDecimal total = rentalPrice.multiply(BigDecimal.valueOf(nbrRentalPerDays == null ? 1 : nbrRentalPerDays));
+            total = total.multiply(BigDecimal.valueOf(newQuantity));
+
+            lineCmd.setProduct(product);
+            lineCmd.setQuantite(newQuantity);
+            lineCmd.setNbrRentalPerDays(nbrRentalPerDays == null ? 1 : nbrRentalPerDays);
+            lineCmd.setTotal(total);
+
+            lineCmdRepository.save(lineCmd);
+            return "Line command updated successfully.";
+        }
+    }
+
 
     @Override
     public BigDecimal getTotalForLineCmd(Integer lineCmdId) {
         LineCmd lineCmd = lineCmdRepository.findById(lineCmdId).orElse(null);
-        if (lineCmd == null) {
-            throw new IllegalArgumentException("Invalid line command id: " + lineCmdId);
+        Integer quantity = lineCmd.getQuantite();
+        BigDecimal total;
+        if (lineCmd.getProduct().getIsRental()) {
+            Integer rentalDays = lineCmd.getNbrRentalPerDays();
+            BigDecimal rentalPricePerDay = lineCmd.getProduct().getPrice();
+            total = rentalPricePerDay.multiply(BigDecimal.valueOf(rentalDays)).multiply(BigDecimal.valueOf(quantity));
+        } else {
+            BigDecimal pricePerUnit = lineCmd.getProduct().getPrice();
+            total = pricePerUnit.multiply(BigDecimal.valueOf(quantity));
         }
-
-        BigDecimal pricePerUnit = lineCmd.getProduct().getPrice();
-        System.out.println("-----pricePerUnit"+pricePerUnit);
-        BigDecimal quantity = BigDecimal.valueOf(lineCmd.getQuantite());
-        System.out.println("-----quantity"+quantity);
-        BigDecimal total = pricePerUnit.multiply(quantity);
-        System.out.println("-----"+total);
         lineCmd.setTotal(total);
         lineCmdRepository.save(lineCmd);
         return total;
     }
 
 
-    @Override
-    public void updateQuantityAndTotal(Integer idLinecmd, Integer productId, Integer newQuantity, Integer nbrRentalPerDays) {
-        LineCmd lineCmd = lineCmdRepository.findById(idLinecmd).orElseThrow(() -> new NoSuchElementException("LineCmd not found with id " + idLinecmd));
-        Product product = productRepository.findById(productId).orElse(null);
 
-        assert product != null;
-        BigDecimal rentalPrice = product.getPrice();
-        BigDecimal total = rentalPrice.multiply(BigDecimal.valueOf(nbrRentalPerDays == null ? 1 : nbrRentalPerDays));
-        total = total.multiply(BigDecimal.valueOf(newQuantity));
 
-        lineCmd.setProduct(product);
-        lineCmd.setQuantite(newQuantity);
-        lineCmd.setNbrRentalPerDays(nbrRentalPerDays == null ? 1 : nbrRentalPerDays);
-        lineCmd.setTotal(total);
-
-        lineCmdRepository.save(lineCmd);
-    }
 
 
 

@@ -118,6 +118,12 @@ public class CategoryServiceImpl implements ICategoryService {
         product.setCategory(category);
         productRepository.save(product);
     }
+
+    public boolean isSustainable() {
+        Category category =new Category();
+        return category.getName().contains("*");
+    }
+
 //    @Override
 //    public List<CategoryDto> filterCategoriesByTypeAndName(String categoryType, String categoryName) {
 //        List<Category> categories = categoryRepository.findByCategoryDtoCategoryTypeAndNameContainingIgnoreCase(categoryType, categoryName);

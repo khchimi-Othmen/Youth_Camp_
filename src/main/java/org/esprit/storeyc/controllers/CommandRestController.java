@@ -78,4 +78,5 @@ public class CommandRestController {
 		return commandService.finalizeCommand(commandId);
 	}
 
+
 }

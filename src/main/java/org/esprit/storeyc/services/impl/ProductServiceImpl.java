@@ -1,6 +1,7 @@
 package org.esprit.storeyc.services.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.esprit.storeyc.entities.Category;
 import org.esprit.storeyc.entities.LineCmd;
 import org.esprit.storeyc.entities.User;
 import org.esprit.storeyc.dto.ProductDto;
@@ -14,6 +15,7 @@ import org.esprit.storeyc.entities.Product;
 import org.esprit.storeyc.repositories.ProductRepository;
 import org.esprit.storeyc.services.interfaces.IProductService;
 
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
@@ -38,15 +40,22 @@ public class ProductServiceImpl implements IProductService {
     LineCmdRepository lineCmdRepository;
 
 
-    @Override
-    public ProductDto createProduct(ProductDto productDto) {
+    @Transactional
+    public ProductDto createProductAndAssignToCategory(ProductDto productDto, Integer categoryId) {
         List<String> errors = ProductValidator.validate(productDto);
         if (!errors.isEmpty()) {
             log.error("Product is not valid: {}", errors);
         }
-        Product createdProduct = productRepository.save(ProductDto.toEntity(productDto));
+
+        Category category = categoryRepository.findById(categoryId).orElse(null);
+
+        Product product = ProductDto.toEntity(productDto);
+        product.setCategory(category);
+
+        Product createdProduct = productRepository.save(product);
         return ProductDto.fromEntity(createdProduct);
     }
+
 
     @Override
     public void updateProduct(ProductDto updatedProductDto) {
@@ -100,15 +109,6 @@ public class ProductServiceImpl implements IProductService {
         return productDtos;
     }
 
-//    @Override
-//    public List<ProductDto> filterProductsByCategory(CaType category) {
-//        List<Product> products = productRepository.findByCategory(category);
-//        List<ProductDto> productDtos = new ArrayList<>();
-//        for (Product product : products) {
-//            productDtos.add(ProductDto.fromEntity(product));
-//        }
-//        return productDtos;
-//    }
 
     @Override
     public List<ProductDto> searchProductsByName(String name) {
@@ -211,104 +211,5 @@ public class ProductServiceImpl implements IProductService {
                 .map(ProductDto::fromEntity)
                 .collect(Collectors.toList());
     }
-
-    @Override
-    public ProductDto addRental(Integer productId) {
-        Optional<Product> optionalProduct = productRepository.findById(productId);
-        if (optionalProduct.isPresent()) {
-            Product product = optionalProduct.get();
-            product.setIsRental(true);
-            productRepository.save(product);
-            return ProductDto.fromEntity(product);
-        }
-        return null;
-    }
-
-
-@Override
-public BigDecimal calculateRentalProductTotal(Integer productId, Integer rentalDays, Integer requestedQuantity) {
-    Product product = productRepository.findById(productId).orElse(null);
-    BigDecimal rentalPricePerDay = product.getPrice();
-    BigDecimal rentalProductTotal = rentalPricePerDay.multiply(BigDecimal.valueOf(rentalDays)).multiply(BigDecimal.valueOf(requestedQuantity));
-    log.info("Total cost for this rental product line: " + rentalProductTotal);
-    return rentalProductTotal;
-}
-
-
-    @Override
-    public void deleteRental(Integer rentalId) {
-        Optional<Product> productOptional = productRepository.findById(rentalId);
-        if (productOptional.isPresent()) {
-            Product product = productOptional.get();
-            if (product.getIsRental()) {
-                productRepository.delete(product);
-            }
-        }
-    }
-
-    @Override
-    public void deleteSale(Integer saleId) {
-        Optional<Product> productOptional = productRepository.findById(saleId);
-        if (productOptional.isPresent()) {
-            Product product = productOptional.get();
-            if (!product.getIsRental()) {
-                productRepository.delete(product);
-            }
-        }
-    }
-
-    @Override
-    public BigDecimal redeemPointsForDiscount(User user, BigDecimal purchaseAmount) {
-        BigDecimal discountAmount = BigDecimal.ZERO;
-
-        // Define conversion rate for points to dollars
-        BigDecimal pointConversionRate = BigDecimal.valueOf(0.01);
-
-        // Calculate maximum points that can be redeemed
-        Float maxPoints = user.getLoyaltyPts();
-
-        // Calculate points to dollars conversion
-        BigDecimal pointsToDollars = BigDecimal.valueOf(maxPoints).multiply(pointConversionRate);
-
-        // Check if user has enough points to redeem
-        if (pointsToDollars.compareTo(purchaseAmount) <= 0) {
-            // Calculate discount amount and deduct points from user's loyalty points balance
-            discountAmount = pointsToDollars;
-            user.setLoyaltyPts((float) 0);
-        } else {
-            // Calculate discount amount and update user's loyalty points balance
-            discountAmount = purchaseAmount;
-            Integer pointsToRedeem = purchaseAmount.divide(pointConversionRate, RoundingMode.DOWN).intValue();
-            user.setLoyaltyPts(maxPoints - pointsToRedeem);
-        }
-
-        // Save user's updated loyalty points balance
-        userRepository.save(user);
-
-        return discountAmount;
-    }
-
-
-
-    @Override
-    public void processPayment(Integer productId, BigDecimal amount) {
-        Optional<Product> optionalProduct = productRepository.findById(productId);
-        if (optionalProduct.isPresent()) {
-            Product product = optionalProduct.get();
-            if (product.getAvailable() && product.getPrice().equals(amount)) {
-                product.setAvailable(false);
-                productRepository.save(product);
-                log.info("Payment processed successfully for product with ID: " + productId);
-            } else {
-                log.error("Payment amount is incorrect or product is not available for purchase");
-            }
-        } else {
-            log.error("Product with ID: " + productId + " not found");
-        }
-    }
-
-
-
-
 }
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
@@ -28,6 +29,12 @@ public class Product implements Serializable {
     private Integer quantityAvailable;
     private Boolean isRental ;// todo make it false
 
+//    @NotNull
+//    private Integer numLikes = 0;
+//    @NotNull
+//    private Integer numDislikes = 0;
+
+
     @OneToMany(cascade = CascadeType.ALL)
     @JsonIgnore
     @ToString.Exclude
@@ -43,6 +50,10 @@ public class Product implements Serializable {
     @ManyToOne
     @JoinColumn(name = "categoryId")
     private Category category;
-
+//
+//    @OneToMany(mappedBy = "product")
+//    private List<Likes_Dislikes> likesDislikes;
+//
+//
 
 }

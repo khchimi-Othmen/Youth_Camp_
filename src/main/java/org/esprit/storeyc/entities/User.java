@@ -6,7 +6,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -40,5 +39,10 @@ public class User implements Serializable {
     @JsonIgnore
     @ToString.Exclude
     private List<Rating> ratings;
+
+//    @OneToMany(mappedBy = "user")
+//    @JsonIgnore
+//    private List<Likes_Dislikes> likesDislikes;
+//
 
 }

@@ -11,13 +11,8 @@ import java.util.List;
 public interface ProductRepository extends JpaRepository<Product, Integer> {
 
 
-//    @Query("SELECT p FROM Product p WHERE p.category = :category")
-//    List<Product> findByCategoryJPQL(@Param("category") CaType category);
+
     List<Product> findByNameContainingIgnoreCase(String name);
-
-    List<Product> findByNameContaining(String name);
-
-    List<Product> findByAvailableTrue();
 
     List<Product> findByPromotion(String promotionName);
     @Query("SELECT p FROM Product p WHERE p.isRental = true")
@@ -25,4 +20,9 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     @Query("SELECT p FROM Product p WHERE p.isRental = false")
     List<Product> findSales();
+
+//    @Query("SELECT p FROM Product p ORDER BY p.numLikes DESC, p.numDislikes ASC")
+//    List<Object[]> findProductsByLikesAndDislikes();
+//
+
 }

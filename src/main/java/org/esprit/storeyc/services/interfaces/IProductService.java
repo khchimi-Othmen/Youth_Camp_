@@ -10,8 +10,8 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public interface IProductService {
-    ProductDto createProduct(ProductDto productDto);
-    public void updateProduct(ProductDto updatedProductDto) ;
+    ProductDto createProductAndAssignToCategory(ProductDto productDto, Integer categoryId);
+    void updateProduct(ProductDto updatedProductDto) ;
     void deleteProduct(Integer productId);
     ProductDto getProductById(Integer productId);
     List<ProductDto> getAllProducts();
@@ -34,14 +34,7 @@ public interface IProductService {
     //Management of tool sales/rentals:
     List<ProductDto> getAllRentals();
     List<ProductDto> getAllSales();
-    ProductDto addRental(Integer productId) ;
-    BigDecimal calculateRentalProductTotal(Integer productId, Integer rentalDays, Integer requestedQuantity) ;
-    void deleteRental(Integer rentalId);
-    void deleteSale(Integer saleId);
-    public BigDecimal redeemPointsForDiscount(User user, BigDecimal purchaseAmount) ;
 
 
-        // methods for payment management
-    void processPayment(Integer productId, BigDecimal amount);
 
 }

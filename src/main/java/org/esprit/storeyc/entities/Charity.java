@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
@@ -12,18 +14,17 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
-public class Category implements Serializable {
+public class Charity implements Serializable {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private Integer categoryId;
+    private Integer id;
     private String name;
     private String description;
-    private String categoryType;
-
-    @OneToMany(mappedBy = "category")
+    private String website;
+    private String contactInformation;
+    @NotNull
+    private BigDecimal TotalDonations = BigDecimal.ZERO;
+    @OneToMany(mappedBy = "charity")
     @JsonIgnore
-    @ToString.Exclude
-    private List<Product> products;
+    private List<Command> commands;
 }
-

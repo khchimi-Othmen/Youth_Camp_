@@ -16,9 +16,19 @@ public class LineCmdValidator {
         if(lineCmdDto.getProductDto()==null){
             errors.add("Veuillez choisir le produit.");
         }
+        if(lineCmdDto.getNbrRentalPerDays() != null && !lineCmdDto.getProductDto().getIsRental()) {
+            errors.add("Cannot specify number of rental days for non-rental product");
+        }
 //        if(lineCmdDto.getQuantite() == null || lineCmdDto.getQuantite() < 1){
 //            errors.add("Veuillez saisir une quantité valide.");
 //        }
         return errors;
+    }
+
+    public static String validateRentalStatus(boolean isRental, Integer nbrRentalPerDays) {
+        if (!isRental && nbrRentalPerDays != null) {
+            return "Product is not for rental, cannot specify number of rental days";
+        }
+        return null;
     }
 }

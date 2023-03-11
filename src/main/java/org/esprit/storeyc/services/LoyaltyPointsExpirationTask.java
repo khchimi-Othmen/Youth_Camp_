@@ -56,7 +56,7 @@ public class LoyaltyPointsExpirationTask {
 //        SimpleMailMessage message = new SimpleMailMessage();
 //        log.info("Sending email to: " + fromEmail);
 //        message.setFrom(fromEmail);
-//        message.setTo("khchimiothmen@esprit.tn");
+//        message.setTo("khchimiothmen@gmail.com");
 //        message.setSubject("Test email");
 //        message.setText("This is a test email sent every 10 seconds.");
 //        message.setText("Dear Customer,\n\nThis is a reminder that your loyalty points will expire in 7 days. Please use them before they expire.\n\nThank you for shopping with us.\n\nBest regards,\nThe StoreYC Team");

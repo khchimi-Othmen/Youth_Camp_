@@ -1,4 +1,4 @@
-//package org.esprit.storeyc.configuration;
+package org.esprit.storeyc.configuration;//package org.esprit.storeyc.configuration;
 //
 //import com.flickr4java.flickr.Flickr;
 //import com.flickr4java.flickr.REST;

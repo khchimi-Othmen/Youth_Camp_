@@ -2,7 +2,10 @@ package org.esprit.storeyc.services.interfaces;
 
 import org.esprit.storeyc.dto.CommandDto;
 import org.esprit.storeyc.entities.Command;
+import org.springframework.core.io.ByteArrayResource;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -20,4 +23,4 @@ public interface ICommandService {
     String redeemPointsForDiscount(Integer commandId, Integer pointsToRedeem) ;
     String finalizeCommand(Integer commandId) ;
 
-}
+    }

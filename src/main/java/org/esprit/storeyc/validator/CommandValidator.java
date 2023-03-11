@@ -2,6 +2,7 @@ package org.esprit.storeyc.validator;
 
 import org.esprit.storeyc.dto.CommandDto;
 import org.esprit.storeyc.entities.CmdType;
+import org.esprit.storeyc.entities.PMType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,33 +13,34 @@ public class CommandValidator {
         List<String> errors = new ArrayList<>();
 
         if (commandDto == null) {
-            errors.add("Veuillez renseigner le mode de paiement de la commande");
-//            errors.add("Veuillez renseigner le type de la commande");
-            errors.add("Veuillez renseigner le poids de la commande");
-            errors.add("Veuillez renseigner la date de livraison de la commande");
+            errors.add("CommandDto cannot be null");
             return errors;
         }
 
         if (commandDto.getPaymentMethod() == null) {
-            errors.add("Veuillez renseigner le mode de paiement de la commande");
+            errors.add("Payment method cannot be null");
         }
 
-//        if (commandDto.getCommandeNumber() == null) {
-//            errors.add("Veuillez renseigner le type de la commande");
-//        }
-
         if (commandDto.getWeight() == null) {
-            errors.add("Veuillez renseigner le poids de la commande");
+            errors.add("Weight cannot be null");
         }
 
         if (commandDto.getDeliveryDate() == null) {
-            errors.add("Veuillez renseigner la date de livraison de la commande");
+            errors.add("Delivery date cannot be null");
         }
 
         return errors;
     }
 
     public static boolean validateStatus(CmdType status) {
-        return status == CmdType.CREATED;
+        return status == CmdType.PENDING;
+    }
+
+    public static String validatePaymentMethod(PMType paymentMethod) {
+        if (paymentMethod == PMType.CASH) {
+            return null;
+        } else {
+            return "Only cash payments are currently accepted";
+        }
     }
 }
