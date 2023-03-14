@@ -3,10 +3,10 @@ package org.esprit.storeyc.controllers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.esprit.storeyc.dto.CommandDto;
 import org.esprit.storeyc.entities.Command;
+import org.esprit.storeyc.services.impl.CommandFinalizerServiceImpl;
 import org.esprit.storeyc.services.impl.CommandServiceImpl;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Tag(name = "Command Management")
@@ -15,9 +15,11 @@ import java.util.List;
 public class CommandRestController {
 
 	private final CommandServiceImpl commandService;
+	private final CommandFinalizerServiceImpl commandFinalizerService;
 
-	public CommandRestController(CommandServiceImpl commandService) {
+	public CommandRestController(CommandServiceImpl commandService, CommandFinalizerServiceImpl commandFinalizerService) {
 		this.commandService = commandService;
+		this.commandFinalizerService = commandFinalizerService;
 	}
 	@PostMapping("/create")
 	public Command createCommand(@RequestBody CommandDto commandDto) {
@@ -75,7 +77,7 @@ public class CommandRestController {
 
 		@PostMapping("/commands/{commandId}/finalize")
 	public String finalizeCommand(@PathVariable Integer commandId) {
-		return commandService.finalizeCommand(commandId);
+		return commandFinalizerService.finalizeCommand(commandId);
 	}
 
 

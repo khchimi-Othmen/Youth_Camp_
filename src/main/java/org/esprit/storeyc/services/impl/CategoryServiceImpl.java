@@ -4,6 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.esprit.storeyc.dto.CategoryDto;
 import org.esprit.storeyc.entities.Category;
 import org.esprit.storeyc.entities.Product;
+import org.esprit.storeyc.exception.EntityNotFoundException;
+import org.esprit.storeyc.exception.ErrorCodes;
+import org.esprit.storeyc.exception.InvalidEntityException;
 import org.esprit.storeyc.repositories.CategoryRepository;
 import org.esprit.storeyc.repositories.ProductRepository;
 import org.esprit.storeyc.services.interfaces.ICategoryService;
@@ -25,16 +28,17 @@ public class CategoryServiceImpl implements ICategoryService {
     ProductRepository productRepository;
 
     @Override
-    public CategoryDto createCategory(CategoryDto categoryDto) {
+    public CategoryDto createCategory(CategoryDto categoryDto) throws InvalidEntityException {
         List<String> errors = CategoryValidator.validate(categoryDto);
         if (!errors.isEmpty()) {
             log.error("Category is not valid: {}", errors);
-            return null;
+            throw new InvalidEntityException("The category is not valid", ErrorCodes.INVALID_REQUEST, errors);
         }
 
         Category createdCategory = categoryRepository.save(CategoryDto.toEntity(categoryDto));
         return CategoryDto.fromEntity(createdCategory);
     }
+
 
     @Override
     public CategoryDto updateCategory(CategoryDto categoryDto) {
@@ -77,6 +81,25 @@ public class CategoryServiceImpl implements ICategoryService {
             return null;
         }
     }
+    @Override
+    public Category findCat(Integer id){
+        categoryRepository.findById(id);
+        return null;
+    }
+
+
+    public CategoryDto findById(Integer id) {
+        if (id == null) {
+            log.error("Category ID is null");
+            return null;
+        }
+        return categoryRepository.findById(id)
+                .map(CategoryDto::fromEntity)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Category with id = " + id + " not found in the DB",
+                        ErrorCodes.CATEGORY_NOT_FOUND));
+    }
+
 
     @Override
     public List<CategoryDto> getAllCategories() {

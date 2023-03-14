@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -18,7 +19,8 @@ public class LineCmd implements Serializable {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Integer id;
     private Integer quantite;
-    private BigDecimal total;
+    @NotNull
+    private BigDecimal total= BigDecimal.ZERO;
     private Integer nbrRentalPerDays;
 
 

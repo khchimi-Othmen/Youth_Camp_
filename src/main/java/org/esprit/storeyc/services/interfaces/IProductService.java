@@ -22,8 +22,7 @@ public interface IProductService {
      void addPromotionToProduct(Integer productId, String promotionName);
      void removePromotionFromProduct(Integer productId) ;
      void applyDiscountToProduct(Integer productId, BigDecimal discount) ;
-     void applyPercentageDiscountToProduct(Integer productId, BigDecimal percentageDiscount) ;
-//  todo  applyPromotionDiscount.
+    public void applyPercentageDiscountToProduct(Integer productId, float percentageDiscount) ;
 
 
 

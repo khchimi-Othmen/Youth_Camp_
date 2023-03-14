@@ -5,6 +5,7 @@ import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -27,8 +28,9 @@ public class Command implements Serializable {
     private BigDecimal weight;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate deliveryDate;//duration<;howa ly ybda ya7sseb mnou date mta3 lkre
-    private  BigDecimal totalC;
-    private BigDecimal discountAmount;
+    private  BigDecimal totalC= BigDecimal.ZERO;
+    @NotNull
+    private BigDecimal discountAmount= BigDecimal.ZERO;
     private Boolean donation;
     private String ref=null;
 
@@ -41,7 +43,6 @@ public class Command implements Serializable {
     @ManyToOne
     @JsonIgnore
     private User user;
-    //todo ask??? relation
     @OneToMany(mappedBy = "command")
     @JsonIgnore
     private List<LineCmd> commandLines;

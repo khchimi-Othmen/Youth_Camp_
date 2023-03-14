@@ -4,6 +4,4 @@ public enum CmdType {
     CREATED,
     PENDING,
     CONFIRMED,
-
-    DELIVERED,
     CANCELLED}

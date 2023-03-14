@@ -32,16 +32,13 @@ public class CharityDto {
         if (charity == null) {
             return null;
         }
-//        List<Integer> commandIds = charity.getCommands().stream()
-//                .map(Command::getId)
-//                .collect(Collectors.toList());
+
         return CharityDto.builder()
                 .id(charity.getId())
                 .name(charity.getName())
                 .description(charity.getDescription())
                 .website(charity.getWebsite())
                 .contactInformation(charity.getContactInformation())
-//                .commandIds(commandIds)
                 .build();
     }
 

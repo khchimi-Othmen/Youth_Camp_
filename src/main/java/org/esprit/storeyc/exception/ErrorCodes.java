@@ -4,6 +4,8 @@ public enum ErrorCodes {
     PRODUCT_NOT_FOUND(1000),
     PRODUCT_NOT_VALID(1001),
     CATEGORY_NOT_FOUND(2000),
+    CATEGORY_NAME_CANNOT_BE_NULL(2001),
+    INVALID_REQUEST(2002),
     ORDER_NOT_FOUND(3000),
     ORDER_NOT_VALID(3001),
     CUSTOMER_NOT_FOUND(4000),
@@ -11,8 +13,8 @@ public enum ErrorCodes {
     CART_ITEM_NOT_FOUND(6000),
     PAYMENT_NOT_FOUND(7000),
     COMMANDE_NOT_FOUND(8000),
-    COMMAND_NOT_VALID(8001);
-
+    COMMAND_NOT_VALID(8001),
+    INVALID_ENTITY(9000);
     private int errorCode;
 
     /*La classe ErrorCodes contient une énumération de codes d'erreur possibles pour le projet. Chaque code d'erreur est associé à un entier unique qui représente le code d'erreur réel.*/

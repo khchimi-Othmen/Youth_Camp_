@@ -25,20 +25,13 @@ public class ProductDto {
     private String producer;
     private Boolean available;
     private String promotion; // add promotion attribute
-//    private String promotionName; // add promotionName attribute
     private Integer quantityAvailable; // add quantity available attribute
     private Boolean isRental; // add is rental attribute
-//    private BigDecimal rentalPrice; // add rental price attribute
-//    @DateTimeFormat(pattern = "yyyy-MM-dd")
-//    private LocalDate rentalStartDate;
-//    @DateTimeFormat(pattern = "yyyy-MM-dd")
-//    private LocalDate rentalEndDate;
 
     @JsonIgnore
     private Category category;
 
-    @JsonIgnore
-    private List<RatingDto> ratings;
+
 
     public static ProductDto fromEntity(Product product) {
         if (product == null) {
@@ -57,13 +50,8 @@ public class ProductDto {
                 .available(product.getAvailable())
                 .category(product.getCategory())
                 .promotion(product.getPromotion())
-//                .promotionName(product.getPromotionName())
-                //.ratings(ratingDtos)
                 .quantityAvailable(product.getQuantityAvailable())
                 .isRental(product.getIsRental())
-//                .rentalPrice(product.getRentalPrice())
-//                .rentalStartDate(product.getRentalStartDate())
-//                .rentalEndDate(product.getRentalEndDate())
                 .build();
     }
 
@@ -80,16 +68,8 @@ public class ProductDto {
         product.setAvailable(productDto.getAvailable());
         product.setCategory(productDto.getCategory());
         product.setPromotion(productDto.getPromotion());
-//        product.setPromotionName(productDto.getPromotionName());
-        //        List<Rating> ratings = productDto.getRatings().stream()
-//                .map(RatingDto::toEntity)
-//                .collect(Collectors.toList());
-//        product.setRatings(ratings);
         product.setQuantityAvailable(productDto.getQuantityAvailable());
         product.setIsRental(productDto.getIsRental());
-//        product.setRentalPrice(productDto.getRentalPrice());
-//        product.setRentalStartDate(productDto.getRentalStartDate());
-//        product.setRentalEndDate(productDto.getRentalEndDate());
         return product;
     }
 }

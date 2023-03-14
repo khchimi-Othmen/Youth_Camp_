@@ -30,6 +30,9 @@ public class LineCmdServiceImpl implements ILineCmdService {
 
     @Override
     public String createLineCmdAndAssignProduct(Integer productId, Integer quantite, Integer nbrRentalPerDays) {
+        if (quantite < 0) {
+            return "Quantity should be a positive integer.";
+        }
         LineCmd lineCmd = new LineCmd();
         lineCmd.setQuantite(quantite);
         Product product = productRepository.findById(productId).orElse(null);
@@ -66,6 +69,9 @@ public class LineCmdServiceImpl implements ILineCmdService {
 
     @Override
     public String updateQuantityAndTotal(Integer idLinecmd, Integer productId, Integer newQuantity, Integer nbrRentalPerDays) {
+        if (newQuantity < 0) {
+            return "Quantity should be a positive integer.";
+        }
         LineCmd lineCmd = lineCmdRepository.findById(idLinecmd).orElse(null);
         Product product = productRepository.findById(productId).orElse(null);
 

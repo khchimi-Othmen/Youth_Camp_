@@ -47,8 +47,4 @@ public class ProductRestController {
 	public List<ProductDto> searchProductsByName(@RequestParam("name") String name) {
 		return productService.searchProductsByName(name);
 	}
-
-
-
-
-	}
+}

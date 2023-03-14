@@ -1,9 +1,7 @@
 package org.esprit.storeyc.services.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.esprit.storeyc.entities.Category;
-import org.esprit.storeyc.entities.LineCmd;
-import org.esprit.storeyc.entities.User;
+import org.esprit.storeyc.entities.*;
 import org.esprit.storeyc.dto.ProductDto;
 import org.esprit.storeyc.repositories.CategoryRepository;
 import org.esprit.storeyc.repositories.LineCmdRepository;
@@ -11,7 +9,6 @@ import org.esprit.storeyc.repositories.UserRepository;
 import org.esprit.storeyc.validator.ProductValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.esprit.storeyc.entities.Product;
 import org.esprit.storeyc.repositories.ProductRepository;
 import org.esprit.storeyc.services.interfaces.IProductService;
 
@@ -38,6 +35,8 @@ public class ProductServiceImpl implements IProductService {
 
     @Autowired
     LineCmdRepository lineCmdRepository;
+
+
 
 
     @Transactional
@@ -109,6 +108,10 @@ public class ProductServiceImpl implements IProductService {
         return productDtos;
     }
 
+    public List<Product> getAllP() {
+        return productRepository.findAll();
+    }
+
 
     @Override
     public List<ProductDto> searchProductsByName(String name) {
@@ -129,7 +132,6 @@ public class ProductServiceImpl implements IProductService {
                 .map(ProductDto::fromEntity)
                 .collect(Collectors.toList());
     }
-    //todo fix the dto
     @Override
     public void addPromotionToProduct(Integer productId, String promotionName) {
         // Get the product by id
@@ -164,10 +166,10 @@ public class ProductServiceImpl implements IProductService {
         updateProduct(productDto);
     }
     @Override
-    public void applyPercentageDiscountToProduct(Integer productId, BigDecimal percentageDiscount) {
+    public void applyPercentageDiscountToProduct(Integer productId, float percentageDiscount) {
         ProductDto productDto = getProductById(productId);
         BigDecimal currentPrice = productDto.getPrice();
-        BigDecimal discountAmount = currentPrice.multiply(percentageDiscount.divide(BigDecimal.valueOf(100)));
+        BigDecimal discountAmount = currentPrice.multiply(BigDecimal.valueOf(percentageDiscount).divide(BigDecimal.valueOf(100)));
         BigDecimal discountedPrice = currentPrice.subtract(discountAmount);
         productDto.setPrice(discountedPrice);
         updateProduct(productDto);
@@ -211,5 +213,9 @@ public class ProductServiceImpl implements IProductService {
                 .map(ProductDto::fromEntity)
                 .collect(Collectors.toList());
     }
+
+
+
+
 }
 

@@ -20,6 +20,8 @@ public class Category implements Serializable {
     private String name;
     private String description;
     private String categoryType;
+    private String code;
+
 
     @OneToMany(mappedBy = "category")
     @JsonIgnore

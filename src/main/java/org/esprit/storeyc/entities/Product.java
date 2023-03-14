@@ -2,6 +2,7 @@ package org.esprit.storeyc.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -28,32 +29,32 @@ public class Product implements Serializable {
     private String promotion;
     private Integer quantityAvailable;
     private Boolean isRental ;// todo make it false
-
-//    @NotNull
-//    private Integer numLikes = 0;
-//    @NotNull
-//    private Integer numDislikes = 0;
+    @Column(nullable = false)
+    private Integer sales = 0;
 
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JsonIgnore
-    @ToString.Exclude
-    private List<Rating> ratings;
+
+    public void incrementSales(int quantity) {
+        this.sales += quantity;
+    }
+
+
+
 
     @OneToMany(mappedBy = "product")
     @JsonIgnore
     @ToString.Exclude
     private List<LineCmd> lineCmds;
 
+//    @OneToMany(mappedBy = "product")
+//    @JsonIgnore
+//    @ToString.Exclude
+//    private List<ProductStatistics> productStatistiques;
+
 
 
     @ManyToOne
     @JoinColumn(name = "categoryId")
     private Category category;
-//
-//    @OneToMany(mappedBy = "product")
-//    private List<Likes_Dislikes> likesDislikes;
-//
-//
 
 }

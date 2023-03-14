@@ -1,4 +1,4 @@
-package org.esprit.storeyc.services;
+package org.esprit.storeyc.services.Task;
 
 import lombok.extern.slf4j.Slf4j;
 import org.esprit.storeyc.entities.User;
@@ -27,7 +27,7 @@ public class LoyaltyPointsExpirationTask {
     @Autowired
     private UserServiceImpl userService;
 
-    @Scheduled(cron = "0 0 0 * * ?") // run at midnight every day
+    @Scheduled(cron = "0 0 0 1 */3 ?") // run at midnight on the 1st day of every 3rd month
     public void expireLoyaltyPoints() {
         List<User> users = userRepository.findAllByLoyaltyPointsExpireDateBefore(LocalDate.now());
         for (User user : users) {
@@ -37,7 +37,8 @@ public class LoyaltyPointsExpirationTask {
         }
     }
 
-    @Scheduled(fixedDelay = 3600000) // run every hour
+
+    @Scheduled(cron = "0 0 0 * * ?") // run at midnight every day
     public void cleanupExpiredLoyaltyPoints() {
         List<User> users = userRepository.findAll();
         for (User user : users) {

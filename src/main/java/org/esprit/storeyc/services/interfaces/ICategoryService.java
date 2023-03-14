@@ -1,6 +1,7 @@
 package org.esprit.storeyc.services.interfaces;
 
 import org.esprit.storeyc.dto.CategoryDto;
+import org.esprit.storeyc.entities.Category;
 
 import java.util.List;
 
@@ -14,5 +15,6 @@ public interface ICategoryService {
      List<CategoryDto> searchCategoriesByName(String categoryName) ;
      public void assignProductToCategory(Integer productId, Integer categoryId) ;
      //todo désaffecter
+     public Category findCat(Integer id);
 
-}
+     }

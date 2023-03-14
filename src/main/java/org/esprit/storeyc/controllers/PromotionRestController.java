@@ -33,7 +33,7 @@ public class PromotionRestController {
 	}
 
 	@PutMapping("/{productId}/applyPercentageDiscountToProduct")
-	public void applyPercentageDiscountToProduct(@PathVariable Integer productId, @RequestParam BigDecimal percentageDiscount) {
+	public void applyPercentageDiscountToProduct(@PathVariable Integer productId, @RequestParam float percentageDiscount) {
 		productService.applyPercentageDiscountToProduct(productId, percentageDiscount);
 	}
 

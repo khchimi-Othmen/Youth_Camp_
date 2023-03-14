@@ -26,7 +26,6 @@ public class CommandDto {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate deliveryDate;
     private Boolean donation;
-    private String ref=null;
 
     @JsonIgnore
     private Charity charity;
@@ -47,7 +46,6 @@ public class CommandDto {
                 .donation(command.getDonation())
                 .user(command.getUser())
                 .charity(command.getCharity())
-                .ref(command.getRef())
                 .build();
     }
 
@@ -64,7 +62,6 @@ public class CommandDto {
         command.setDonation(commandDto.getDonation());
         command.setUser(commandDto.getUser());
         command.setCharity(commandDto.getCharity());
-        command.setRef(commandDto.getRef());
         return command;
     }
 }

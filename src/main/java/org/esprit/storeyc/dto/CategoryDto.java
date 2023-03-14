@@ -19,6 +19,8 @@ public class CategoryDto {
     private String name;
     private String description;
     private String categoryType;
+    private String code; // add this property
+
     @JsonIgnore
     private List<Product> products;
 
@@ -26,18 +28,13 @@ public class CategoryDto {
         if (category == null) {
             return null;
         }
-        //todo
-//        List<Integer> productIDs = category.getProducts()
-//                .stream()
-//                .map(Product::getProductId)
-//                .collect(Collectors.toList());
 
         return CategoryDto.builder()
                 .categoryId(category.getCategoryId())
                 .name(category.getName())
                 .description(category.getDescription())
-//                .products(productIDs)
                 .categoryType(category.getCategoryType())
+                .code(category.getCode())
                 .build();
     }
 
@@ -50,16 +47,7 @@ public class CategoryDto {
         category.setName(categoryDto.getName());
         category.setDescription(categoryDto.getDescription());
         category.setCategoryType(categoryDto.getCategoryType());
-//
-//        List<Product> products = categoryDto.getProducts()
-//                .stream()
-//                .map(id -> {
-//                    Product product = new Product();
-//                    product.setProductId(id);
-//                    return product;
-//                })
-//                .collect(Collectors.toList());
-//        category.setProducts(products);
+        category.setCode(categoryDto.getCode());
         return category;
     }
 }

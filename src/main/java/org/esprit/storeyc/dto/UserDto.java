@@ -2,7 +2,6 @@ package org.esprit.storeyc.dto;
 
 import lombok.*;
 import org.esprit.storeyc.entities.Command;
-import org.esprit.storeyc.entities.Rating;
 import org.esprit.storeyc.entities.User;
 
 import java.io.Serializable;
@@ -22,9 +21,8 @@ public class UserDto implements Serializable {
     private String photo;
     private String email;
     private String motDePasse;
-    private Float loyaltyPts;
     private List<Integer> commandIds;
-    private List<Integer> ratingIds;
+
 
     public static UserDto fromEntity(User user) {
         if (user == null) {
@@ -34,10 +32,6 @@ public class UserDto implements Serializable {
                 .stream()
                 .map(Command::getCommandeNumber)
                 .collect(Collectors.toList());
-        List<Integer> ratingIds = user.getRatings()
-                .stream()
-                .map(Rating::getId)
-                .collect(Collectors.toList());
         return UserDto.builder()
                 .id(user.getId())
                 .nom(user.getNom())
@@ -45,9 +39,7 @@ public class UserDto implements Serializable {
                 .photo(user.getPhoto())
                 .email(user.getEmail())
                 .motDePasse(user.getMotDePasse())
-                .loyaltyPts(user.getLoyaltyPts())
                 .commandIds(commandIds)
-                .ratingIds(ratingIds)
                 .build();
     }
 
@@ -62,7 +54,6 @@ public class UserDto implements Serializable {
         user.setPhoto(userDto.getPhoto());
         user.setEmail(userDto.getEmail());
         user.setMotDePasse(userDto.getMotDePasse());
-        user.setLoyaltyPts(userDto.getLoyaltyPts());
         return user;
     }
 
