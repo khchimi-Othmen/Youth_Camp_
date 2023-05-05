@@ -8,7 +8,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.List;
-
+//@CrossOrigin(origins = {"http://localhost:8075"})
+@CrossOrigin("*")
 @Tag(name = "Promotion Management")
 @RestController
 @RequestMapping("/Promotion")
@@ -28,7 +29,7 @@ public class PromotionRestController {
 		productService.addPromotionToProduct(productId, promotionName);
 	}
 	@PutMapping("/{productId}/{discount}/applyDiscountToProduct")
-	public void applyDiscountToProduct(@PathVariable("productId") Integer productId, @PathVariable("discount") BigDecimal discount) {
+	public void applyDiscountToProduct(@PathVariable("productId") Integer productId, @PathVariable("discount") Integer discount) {
 		productService.applyDiscountToProduct(productId, discount);
 	}
 
@@ -42,6 +43,7 @@ public class PromotionRestController {
 	public void removePromotionFromProduct(@PathVariable("productId") Integer productId) {
 		productService.removePromotionFromProduct(productId);
 	}
+
 
 
 }

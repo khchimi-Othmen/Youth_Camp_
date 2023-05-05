@@ -47,18 +47,23 @@ public class CommandFinalizerServiceImpl implements ICommandFinalizerService {
     private static final double TAX_RATE = 0.15;
 
     @Override
-    public String finalizeCommand(Integer commandId) {
-        Command command = commandRepository.findById(commandId).orElse(null);
-        CommandDto commandDto = CommandDto.fromEntity(command);
-        List<String> errors = CommandValidator.validate(commandDto);
-        if (!errors.isEmpty()) {
-            return String.join(" ", errors);
+    public String finalizeCommand() {
+        List<Command> pendingCommands = commandRepository.findByCommmandType(CmdType.PENDING);
+        if (pendingCommands.isEmpty()) {
+            return "No pending commands found";
         }
 
+        Command command = pendingCommands.get(0);
+        CommandDto commandDto = CommandDto.fromEntity(command);
+        List<String> errors = CommandValidator.validate(commandDto);
+//        if (!errors.isEmpty()) {
+//            return String.join(" ", errors);
+//        }
+
         // Validate command status and payment method
-        if (!CommandValidator.validateStatus(command.getCommmandType())) {
-            return "Command has already been finalized or cancelled";
-        }
+//        if (!CommandValidator.validateStatus(command.getCommmandType())) {
+//            return "Command has already been finalized or cancelled";
+//        }
         String paymentMethodError = CommandValidator.validatePaymentMethod(command.getPaymentMethod());
         if (paymentMethodError != null) {
             return paymentMethodError;
@@ -67,11 +72,11 @@ public class CommandFinalizerServiceImpl implements ICommandFinalizerService {
 
 
         BigDecimal total = command.getTotalC();
-        List<String> unavailableProducts = checkProductAvailability(command);
+//        List<String> unavailableProducts = checkProductAvailability(command);
 
-        if (!unavailableProducts.isEmpty()) {
-            return buildUnavailableProductsErrorMessage(unavailableProducts);
-        }
+//        if (!unavailableProducts.isEmpty()) {
+//            return buildUnavailableProductsErrorMessage(unavailableProducts);
+//        }
         // subtract product quantities and assign loyalty points
         subtractQuantity(command);
         assignPointsForPurchase(command, total);
@@ -82,7 +87,7 @@ public class CommandFinalizerServiceImpl implements ICommandFinalizerService {
         }
         finalizePendingCommand(command, total);
         // send confirmation email
-        emailService.sendConfirmationEmail(command.getUser().getEmail(), command);
+//        emailService.sendConfirmationEmail(command.getUser().getEmail(), command);
         BigDecimal totalWithTax = addTax(total);
         return "Command finalized. Total cost: " + totalWithTax;
     }
@@ -192,7 +197,6 @@ public class CommandFinalizerServiceImpl implements ICommandFinalizerService {
         return total.add(taxAmount);
     }
 }
-
 
 
 

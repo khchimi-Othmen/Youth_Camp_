@@ -1,5 +1,6 @@
 package org.esprit.storeyc.repositories;
 
+import org.esprit.storeyc.entities.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -24,5 +25,6 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 //    @Query("SELECT p FROM Product p ORDER BY p.numLikes DESC, p.numDislikes ASC")
 //    List<Object[]> findProductsByLikesAndDislikes();
 //
+List<Product> findByCategory(Category category);
 
 }

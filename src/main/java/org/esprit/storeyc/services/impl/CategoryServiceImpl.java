@@ -52,6 +52,8 @@ public class CategoryServiceImpl implements ICategoryService {
         if (optionalCategory.isPresent()) {
             Category existingCategory = optionalCategory.get();
             existingCategory.setName(categoryDto.getName());
+            existingCategory.setDescription(categoryDto.getDescription());
+            existingCategory.setCode(categoryDto.getCode());
             Category updatedCategory = categoryRepository.save(existingCategory);
             return CategoryDto.fromEntity(updatedCategory);
         } else {
@@ -140,6 +142,16 @@ public class CategoryServiceImpl implements ICategoryService {
         }
         product.setCategory(category);
         productRepository.save(product);
+    }
+
+    @Override
+    public List<Product> getProductsByCategory(Integer categoryId) {
+        Category category = categoryRepository.findById(categoryId).orElse(null);
+        if (category == null) {
+            log.info("Category not found");
+            return null;
+        }
+        return productRepository.findByCategory(category);
     }
 
     public boolean isSustainable() {

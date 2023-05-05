@@ -10,18 +10,21 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public interface IProductService {
+    void createProduct(Product productDto) ;
     ProductDto createProductAndAssignToCategory(ProductDto productDto, Integer categoryId);
     void updateProduct(ProductDto updatedProductDto) ;
     void deleteProduct(Integer productId);
     ProductDto getProductById(Integer productId);
     List<ProductDto> getAllProducts();
     List<ProductDto> searchProductsByName(String name);
+    Product getRandomProduct(List<Product> products) ;
+    List<ProductDto> getRandomProducts(int count) ;
 
-        //the Management of promotions/offers
-     List<ProductDto> getProductsByPromotion(String promotionName);
-     void addPromotionToProduct(Integer productId, String promotionName);
-     void removePromotionFromProduct(Integer productId) ;
-     void applyDiscountToProduct(Integer productId, BigDecimal discount) ;
+    //the Management of promotions/offers
+    List<ProductDto> getProductsByPromotion(String promotionName);
+    void addPromotionToProduct(Integer productId, String promotionName);
+    void removePromotionFromProduct(Integer productId) ;
+    void applyDiscountToProduct(Integer productId, Integer discount) ;
     public void applyPercentageDiscountToProduct(Integer productId, float percentageDiscount) ;
 
 

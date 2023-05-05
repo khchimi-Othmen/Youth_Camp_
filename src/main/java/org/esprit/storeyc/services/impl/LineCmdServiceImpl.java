@@ -2,6 +2,8 @@ package org.esprit.storeyc.services.impl;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.esprit.storeyc.dto.LineCmdDto;
+import org.esprit.storeyc.entities.CmdType;
 import org.esprit.storeyc.entities.Command;
 import org.esprit.storeyc.entities.LineCmd;
 import org.esprit.storeyc.entities.Product;
@@ -12,7 +14,10 @@ import org.esprit.storeyc.services.interfaces.ILineCmdService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -51,8 +56,6 @@ public class LineCmdServiceImpl implements ILineCmdService {
     }
 
 
-
-
     @Override
     public void assignCommandToLineCmd(Integer lineCmdId, Integer commandId) {
         Optional<LineCmd> optionalLineCmd = lineCmdRepository.findById(lineCmdId);
@@ -63,9 +66,64 @@ public class LineCmdServiceImpl implements ILineCmdService {
             lineCmd.setCommand(command);
             lineCmdRepository.save(lineCmd);
         } else {
-        log.error("Line command or command not found.");
-            }
+            log.error("Line command or command not found.");
+        }
     }
+
+    @Override
+    public List<LineCmd> getLineCmdsByCommandId(Integer commandId) {
+        Optional<Command> optionalCommand = commandRepository.findById(commandId);
+        if (optionalCommand.isPresent()) {
+            Command command = optionalCommand.get();
+            return lineCmdRepository.findByCommand(command);
+        } else {
+            log.error("Command not found.");
+            return Collections.emptyList();
+        }
+    }
+
+    @Override
+    public void deleteLineCmd(Integer lineCmdId){
+        lineCmdRepository.deleteById(lineCmdId);
+    }
+    @Override
+    public Integer getLineCmdQuantity(Integer lineCmdId) {
+        Optional<LineCmd> lineCmdOptional = lineCmdRepository.findById(lineCmdId);
+        if(lineCmdOptional.isPresent()) {
+            return lineCmdOptional.get().getQuantite();
+        } else {
+            throw new EntityNotFoundException("Line command not found with id: " + lineCmdId);
+        }
+    }
+    @Override
+    public LineCmdDto updateLineCmdQuantity(Integer lineCmdId, Integer quantity) {
+        Optional<LineCmd> lineCmdOptional = lineCmdRepository.findById(lineCmdId);
+        if(lineCmdOptional.isPresent()) {
+            LineCmd lineCmd = lineCmdOptional.get();
+            lineCmd.setQuantite(quantity);
+            lineCmdRepository.save(lineCmd);
+            return LineCmdDto.fromEntity(lineCmd);
+        }
+        throw new EntityNotFoundException("Line command not found with id: " + lineCmdId);
+    }
+    @Override
+    public LineCmdDto updateLineCmdNbrRentalPerDays(Integer lineCmdId, Integer nbrRentalPerDays) {
+        Optional<LineCmd> lineCmdOptional = lineCmdRepository.findById(lineCmdId);
+        if (lineCmdOptional.isPresent()) {
+            LineCmd lineCmd = lineCmdOptional.get();
+            Product product = lineCmd.getProduct();
+            if (product.getIsRental()) {
+                lineCmd.setNbrRentalPerDays(nbrRentalPerDays);
+                lineCmdRepository.save(lineCmd);
+                return LineCmdDto.fromEntity(lineCmd);
+            } else {
+                throw new IllegalStateException("Cannot update rental days for a non-rental product.");
+            }
+        }
+        throw new EntityNotFoundException("Line command not found with id: " + lineCmdId);
+    }
+
+
 
     @Override
     public String updateQuantityAndTotal(Integer idLinecmd, Integer productId, Integer newQuantity, Integer nbrRentalPerDays) {
@@ -117,11 +175,43 @@ public class LineCmdServiceImpl implements ILineCmdService {
 
 
 
+    @Override
+    public String getProductNameForLineCmd(Integer lineCmdId) {
+        LineCmd lineCmd = lineCmdRepository.findById(lineCmdId).orElse(null);
+        if (lineCmd == null || lineCmd.getProduct() == null) {
+            return null;
+        }
+        return lineCmd.getProduct().getName();
+    }
 
 
 
+    @Override
+    public List<LineCmd> getAllLineCmd() {
+        return lineCmdRepository.findAll();
+    }
 
 
+    @Override
+    public void assignLineCmdToCommand(Integer lineCmdId) {
+        Optional<LineCmd> optionalLineCmd = lineCmdRepository.findById(lineCmdId);
+        if (optionalLineCmd.isPresent()) {
+            LineCmd lineCmd = optionalLineCmd.get();
+            Command command = null;
+            List<Command> pendingCommands = commandRepository.findByCommmandType(CmdType.PENDING);
+            if (!pendingCommands.isEmpty()) {
+                command = pendingCommands.get(0);
+            } else {
+                command = new Command();
+                command.setCommmandType(CmdType.PENDING);
+                commandRepository.save(command);
+            }
+            lineCmd.setCommand(command);
+            lineCmdRepository.save(lineCmd);
+        } else {
+            log.error("Line command not found.");
+        }
+    }
 
 
 }

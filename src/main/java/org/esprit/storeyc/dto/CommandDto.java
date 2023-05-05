@@ -27,9 +27,9 @@ public class CommandDto {
     private LocalDate deliveryDate;
     private Boolean donation;
 
-    @JsonIgnore
+//    @JsonIgnore
     private Charity charity;
-    @JsonIgnore
+//    @JsonIgnore
     private User user;
 
 

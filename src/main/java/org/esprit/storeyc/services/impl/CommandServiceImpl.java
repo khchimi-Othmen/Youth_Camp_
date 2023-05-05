@@ -4,9 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.esprit.storeyc.dto.CommandDto;
 import org.esprit.storeyc.entities.*;
-import org.esprit.storeyc.repositories.CommandRepository;
-import org.esprit.storeyc.repositories.DeliveryRepository;
-import org.esprit.storeyc.repositories.UserRepository;
+import org.esprit.storeyc.repositories.*;
 import org.esprit.storeyc.services.interfaces.ICommandService;
 import org.esprit.storeyc.validator.CommandValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +13,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -29,6 +25,13 @@ public class CommandServiceImpl implements ICommandService {
     private CommandRepository commandRepository;
     @Autowired
     private DeliveryRepository deliveryRepository;
+    @Autowired
+    private ProductRepository productRepository;
+    @Autowired
+    private LineCmdRepository lineCmdRepository;
+    public String generateRandomString(int length){
+        return RandomStringUtils.randomAlphanumeric(length);
+    }
 
     @Override
     public Command createCommand(CommandDto commandDto) {
@@ -73,6 +76,47 @@ public class CommandServiceImpl implements ICommandService {
         return "Error cancelling command";
     }
 
+    @Override
+    public String cancelCommand() {
+        List<Command> pendingCommands = commandRepository.findByCommmandType(CmdType.PENDING);
+        if (pendingCommands.isEmpty()) {
+            return "No pending commands found";
+        }
+
+        Command command = pendingCommands.get(0);
+
+        if (command.getCommmandType() == CmdType.CANCELLED) {
+            return "Command has already been cancelled";
+        }
+
+        if (command.getCommmandType() == CmdType.CONFIRMED) {
+            return "Command has already been finalized and cannot be cancelled";
+        }
+
+        if (command.getCommmandType() == CmdType.PENDING) {
+            command.setCommmandType(CmdType.CANCELLED);
+            commandRepository.save(command);
+            unassignAllLineCmdForCommand(command.getCommandeNumber());
+            return "Command cancelled";
+        }
+
+        return "Error cancelling command";
+    }
+
+    @Override
+    public void unassignAllLineCmdForCommand(Integer commandId) {
+        Optional<Command> optionalCommand = commandRepository.findById(commandId);
+        if (optionalCommand.isPresent()) {
+            Command command = optionalCommand.get();
+            List<LineCmd> lineCmds = lineCmdRepository.findByCommand(command);
+            for (LineCmd lineCmd : lineCmds) {
+                lineCmd.setCommand(null);
+                lineCmdRepository.save(lineCmd);
+            }
+        } else {
+            log.error("Command not found.");
+        }
+    }
 
     @Override
     public CommandDto updateCommand(CommandDto commandDto) {
@@ -82,20 +126,22 @@ public class CommandServiceImpl implements ICommandService {
             return null;
         }
 
-        Optional<Command> optionalCommand = commandRepository.findById(commandDto.getCommandeNumber());
-        if (optionalCommand.isPresent()) {
-            Command existingCommand = optionalCommand.get();
-            existingCommand.setPaymentMethod(commandDto.getPaymentMethod());
-            existingCommand.setCommmandType(commandDto.getCommandType());
-            existingCommand.setWeight(commandDto.getWeight());
-            existingCommand.setDeliveryDate(commandDto.getDeliveryDate());
-            Command updatedCommand = commandRepository.save(existingCommand);
-            return CommandDto.fromEntity(updatedCommand);
-        } else {
-            log.error("Command with ID {} not found", commandDto.getCommandeNumber());
+        List<Command> pendingCommands = commandRepository.findByCommmandType(CmdType.PENDING);
+        if (pendingCommands.isEmpty()) {
+            log.error("No pending command found");
             return null;
         }
+
+        Command pendingCommand = pendingCommands.get(0);
+        pendingCommand.setPaymentMethod(commandDto.getPaymentMethod());
+        pendingCommand.setCommmandType(commandDto.getCommandType());
+//        pendingCommand.setWeight(commandDto.getWeight());
+        pendingCommand.setDeliveryDate(commandDto.getDeliveryDate());
+
+        Command updatedCommand = commandRepository.save(pendingCommand);
+        return CommandDto.fromEntity(updatedCommand);
     }
+
 
     @Override
     public void deleteCommand(Integer commandeNumber) {
@@ -105,6 +151,17 @@ public class CommandServiceImpl implements ICommandService {
         }
 
         commandRepository.deleteById(commandeNumber);
+    }
+    @Override
+    public CommandDto getCommandByRef(String ref) {
+        Optional<Command> optionalCommand = commandRepository.findByRef(ref);
+        if (optionalCommand.isPresent()) {
+            Command command = optionalCommand.get();
+            return CommandDto.fromEntity(command);
+        } else {
+            log.error("Command with ref {} not found", ref);
+            return null;
+        }
     }
 
     @Override
@@ -118,7 +175,6 @@ public class CommandServiceImpl implements ICommandService {
             return null;
         }
     }
-
     @Override
     public List<CommandDto> getAllCommands() {
         List<Command> commands = commandRepository.findAll();
@@ -127,6 +183,10 @@ public class CommandServiceImpl implements ICommandService {
             commandDtos.add(CommandDto.fromEntity(command));
         }
         return commandDtos;
+    }
+    @Override
+    public List<Command> getAllC() {
+        return commandRepository.findAll();
     }
 
 
@@ -150,24 +210,41 @@ public class CommandServiceImpl implements ICommandService {
     }
 
     /**calculateTotalCost before the redeem */
+//    @Override
+//    public String calculateTotalCostPerCommand(Integer commandId) {
+//        Optional<Command> optionalCommand = commandRepository.findById(commandId);
+//
+//        if (!optionalCommand.isPresent()) {
+//            return "Command not found";
+//        }
+//
+//        Command command = optionalCommand.get();
+//
+//        BigDecimal total = calculateCommandTotal(command);
+//
+//        if (total.equals(BigDecimal.ZERO)) {
+//            return "Error calculating total cost";
+//        }
+//
+//        return "Total cost of command " + commandId + ": " + total;
+//    }
+
     @Override
-    public String calculateTotalCostPerCommand(Integer commandId) {
-        Optional<Command> optionalCommand = commandRepository.findById(commandId);
+    public Integer calculateTotalCostForPendingCommands() {
+        BigDecimal total = BigDecimal.ZERO;
 
-        if (!optionalCommand.isPresent()) {
-            return "Command not found";
+        // Retrieve all pending commands
+        List<Command> pendingCommands = commandRepository.findByCommmandType(CmdType.PENDING);
+
+        // Calculate total cost for each command
+        for (Command command : pendingCommands) {
+            total = total.add(calculateCommandTotal(command));
         }
 
-        Command command = optionalCommand.get();
-
-        BigDecimal total = calculateCommandTotal(command);
-
-        if (total.equals(BigDecimal.ZERO)) {
-            return "Error calculating total cost";
-        }
-
-        return "Total cost of command " + commandId + ": " + total;
+        return total.intValue();
     }
+
+
 
     private BigDecimal calculateCommandTotal(Command command) {
         BigDecimal total = BigDecimal.ZERO;
@@ -243,10 +320,65 @@ public class CommandServiceImpl implements ICommandService {
                 + ". Nouveau total de la commande : " + command.getTotalC();
     }
 
-    public String generateRandomString(int length){
-        return RandomStringUtils.randomAlphanumeric(length);
+    //    public String getRefByLineCmdId(Integer lineCmdId) {
+//        Optional<LineCmd> optionalLineCmd = commandLines.stream()
+//                .filter(lineCmd -> lineCmd.getId().equals(lineCmdId))
+//                .findFirst();
+//
+//        if (optionalLineCmd.isPresent()) {
+//            LineCmd lineCmd = optionalLineCmd.get();
+//            return lineCmd.getCommand().getRef();
+//        } else {
+//            return null;
+//        }
+//    }
+    @Override
+    public void addToCart(Integer userId, Integer productId, int quantity) {
+        User user = userRepository.findById(userId).orElse(null);
+        Product product = productRepository.findById(productId).orElse(null);
+        Command cart = getOrCreateCart(user);
+        LineCmd line = createLineItem(cart, product, quantity);
+        cart.getCommandLines().add(line);
+        updateCartTotal(cart);
     }
 
+    private Command getOrCreateCart(User user) {
+        Command cart = user.getCommands().stream()
+                .filter(c -> c.getCommmandType() == CmdType.PENDING)
+                .findFirst()
+                .orElse(null);
+
+        if (cart == null) {
+            cart = new Command();
+            cart.setUser(user);
+            cart.setCommmandType(CmdType.PENDING);
+            cart.setDeliveryDate(LocalDate.now().plusDays(7));
+            cart.setTotalC(BigDecimal.ZERO);
+            cart.setDiscountAmount(BigDecimal.ZERO);
+            cart.setDonation(false);
+            cart.setCommandLines(new ArrayList<>());
+            user.getCommands().add(cart);
+        }
+
+        return cart;
+    }
+
+    private LineCmd createLineItem(Command cart, Product product, int quantity) {
+        LineCmd line = new LineCmd();
+        line.setCommand(cart);
+        line.setProduct(product);
+        line.setQuantite(quantity);
+        line.setNbrRentalPerDays(0);
+        line.setTotal(product.getPrice().multiply(new BigDecimal(quantity)));
+        return line;
+    }
+
+    private void updateCartTotal(Command cart) {
+        BigDecimal total = cart.getCommandLines().stream()
+                .map(LineCmd::getTotal)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        cart.setTotalC(total);
+    }
 
 }
 

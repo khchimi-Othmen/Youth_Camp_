@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
     @Autowired
     UserServiceImpl userService;
-/*@ModelAttribute est utilisé pour lier les données d'une requête HTTP aux paramètres d'une méthode de contrôleur.
- Cette annotation peut être utilisée pour extraire les données d'un formulaire HTML ou d'une requête GET,
-  puis les utiliser dans la méthode de contrôleur pour effectuer une action.*/
+    /*@ModelAttribute est utilisé pour lier les données d'une requête HTTP aux paramètres d'une méthode de contrôleur.
+     Cette annotation peut être utilisée pour extraire les données d'un formulaire HTML ou d'une requête GET,
+      puis les utiliser dans la méthode de contrôleur pour effectuer une action.*/
     @PostMapping("/register")
     public String registerUser(@ModelAttribute("user") User user) {
         userService.registerUser(user);

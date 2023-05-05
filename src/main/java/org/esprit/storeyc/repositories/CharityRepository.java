@@ -8,5 +8,6 @@ import java.util.List;
 
 public interface CharityRepository extends JpaRepository<Charity, Integer> {
 //    List<Charity> findByOrderByTotalDonationsAsc();
+List<Charity> findByNameContainingIgnoreCase(String name);
 
 }

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -105,9 +106,18 @@ public class CharityServiceImpl implements ICharityService {
             return "Invalid command ID.";
         }
     }
-
-
+    @Override
+    public List<CharityDto> searchCharitiesByName(String name) {
+        List<Charity> charities = charityRepository.findByNameContainingIgnoreCase(name);
+        List<CharityDto> charityDtos = new ArrayList<>();
+        for (Charity charity : charities) {
+            charityDtos.add(CharityDto.fromEntity(charity));
+        }
+        return charityDtos;
     }
+
+
+}
 
 
 

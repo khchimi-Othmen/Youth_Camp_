@@ -3,15 +3,21 @@ package org.esprit.storeyc.controllers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.esprit.storeyc.dto.CommandDto;
 import org.esprit.storeyc.entities.Command;
+import org.esprit.storeyc.entities.Product;
+import org.esprit.storeyc.entities.User;
 import org.esprit.storeyc.services.impl.CommandFinalizerServiceImpl;
 import org.esprit.storeyc.services.impl.CommandServiceImpl;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 @Tag(name = "Command Management")
 @RestController
 @RequestMapping("/commands")
+@CrossOrigin("*")
 public class CommandRestController {
 
 	private final CommandServiceImpl commandService;
@@ -21,6 +27,7 @@ public class CommandRestController {
 		this.commandService = commandService;
 		this.commandFinalizerService = commandFinalizerService;
 	}
+
 	@PostMapping("/create")
 	public Command createCommand(@RequestBody CommandDto commandDto) {
 		return  commandService.createCommand(commandDto);
@@ -30,14 +37,9 @@ public class CommandRestController {
 	public String cancelCommand(@PathVariable Integer commandId) {
 		return commandService.cancelCommand(commandId);
 	}
-//	@PostMapping("/create")
-//	public CommandDto createCommand(@RequestBody CommandDto commandDto) {
-//		return commandService.createCommand(commandDto);
-//	}
 
-	@PutMapping("/updateCommand/{commandNumber}")
-	public CommandDto updateCommand(@PathVariable Integer commandNumber, @RequestBody CommandDto commandDto) {
-		commandDto.setCommandeNumber(commandNumber);
+	@PutMapping("/updateCommand")
+	public CommandDto updateCommand(@RequestBody CommandDto commandDto) {
 		return commandService.updateCommand(commandDto);
 	}
 
@@ -51,10 +53,22 @@ public class CommandRestController {
 		return commandService.getCommandById(commandNumber);
 	}
 
+
+	@GetMapping("/getCommandByRef/{ref}")
+	public CommandDto getCommandByRef(@PathVariable String ref) {
+		return commandService.getCommandByRef(ref);
+	}
+
 	@GetMapping("/getAllCommands")
 	public List<CommandDto> getAllCommands() {
 		return commandService.getAllCommands();
 	}
+
+	@GetMapping("/getAllC")
+	public List<Command> getAllC() {
+		return commandService.getAllC();
+	}
+
 
 	@PutMapping("/assignCommandToUser/{commandId}/{userId}")
 	public void assignCommandToUser(@PathVariable Integer commandId,@PathVariable Integer userId) {
@@ -68,17 +82,35 @@ public class CommandRestController {
 	}
 
 
-		@PostMapping("/calculateTotalCostPerCommand/{commandId}")
-	public String calculateTotalCostPerCommand(@PathVariable Integer commandId) {
-		return commandService.calculateTotalCostPerCommand(commandId);
+	//		@PostMapping("/calculateTotalCostPerCommand/{commandId}")
+//	public String calculateTotalCostPerCommand(@PathVariable Integer commandId) {
+//		return commandService.calculateTotalCostPerCommand(commandId);
+//
+//	}
+	@PostMapping("/calculateTotalCostPerCommand")
+	public Integer calculateTotalCostForPendingCommands() {
+		return commandService.calculateTotalCostForPendingCommands();
 
 	}
 
-
-		@PostMapping("/commands/{commandId}/finalize")
-	public String finalizeCommand(@PathVariable Integer commandId) {
-		return commandFinalizerService.finalizeCommand(commandId);
+	@PutMapping("/cancelCommand")
+	public String cancelCommand() {
+		return commandService.cancelCommand();
 	}
 
+	@PostMapping("/commandsfinalize")
+	public String finalizeCommand() {
+		return commandFinalizerService.finalizeCommand();
+	}
+
+
+	@PostMapping("/addToCart/{userId}/{productId}/{quantity}")
+	public void addToCart(@PathVariable Integer userId,@PathVariable Integer productId,@PathVariable int quantity) {
+		commandService.addToCart(userId, productId, quantity);
+	}
+	@PutMapping("/unassignAllLineCmdForCommand/{commandId}")
+	public void unassignAllLineCmdForCommand(@PathVariable Integer commandId) {
+		commandService.unassignAllLineCmdForCommand(commandId);
+	}
 
 }

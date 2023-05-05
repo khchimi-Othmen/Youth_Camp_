@@ -28,7 +28,7 @@ public class ProductDto {
     private Integer quantityAvailable; // add quantity available attribute
     private Boolean isRental; // add is rental attribute
 
-    @JsonIgnore
+//    @JsonIgnore
     private Category category;
 
 

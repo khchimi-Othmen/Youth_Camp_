@@ -16,9 +16,7 @@ import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,6 +35,10 @@ public class ProductServiceImpl implements IProductService {
     LineCmdRepository lineCmdRepository;
 
 
+    @Override
+    public void createProduct(Product productDto) {
+        productRepository.save(productDto);
+    }
 
 
     @Transactional
@@ -45,12 +47,9 @@ public class ProductServiceImpl implements IProductService {
         if (!errors.isEmpty()) {
             log.error("Product is not valid: {}", errors);
         }
-
         Category category = categoryRepository.findById(categoryId).orElse(null);
-
         Product product = ProductDto.toEntity(productDto);
         product.setCategory(category);
-
         Product createdProduct = productRepository.save(product);
         return ProductDto.fromEntity(createdProduct);
     }
@@ -68,6 +67,9 @@ public class ProductServiceImpl implements IProductService {
             Product existingProduct = optionalProduct.get();
             existingProduct.setName(updatedProductDto.getName());
             existingProduct.setPrice(updatedProductDto.getPrice());
+            existingProduct.setPromotion(updatedProductDto.getPromotion());
+            existingProduct.setIsRental(updatedProductDto.getIsRental());
+            existingProduct.setAvailable(updatedProductDto.getAvailable());
             existingProduct.setDescription(updatedProductDto.getDescription());
             existingProduct.setCategory(updatedProductDto.getCategory());
             productRepository.save(existingProduct);
@@ -122,7 +124,21 @@ public class ProductServiceImpl implements IProductService {
         }
         return productDtos;
     }
-
+    @Override
+    public Product getRandomProduct(List<Product> products) {
+        Random rand = new Random();
+        int index = rand.nextInt(products.size());
+        return products.get(index);
+    }
+    @Override
+    public List<ProductDto> getRandomProducts(int count) {
+        List<Product> products = productRepository.findAll();
+        Collections.shuffle(products);
+        List<Product> randomProducts = products.stream().limit(count).collect(Collectors.toList());
+        return randomProducts.stream()
+                .map(ProductDto::fromEntity)
+                .collect(Collectors.toList());
+    }
 
 
     @Override
@@ -135,9 +151,10 @@ public class ProductServiceImpl implements IProductService {
     @Override
     public void addPromotionToProduct(Integer productId, String promotionName) {
         // Get the product by id
-        Product product = productRepository.findById(productId).get();
+        Product product = productRepository.findById(productId).orElse(null);
 
         // Update the product with the new promotion
+        assert product != null;
         product.setPromotion(promotionName);
 
         // Save the updated product entity to the database
@@ -156,15 +173,15 @@ public class ProductServiceImpl implements IProductService {
     }
 
 
-
     @Override
-    public void applyDiscountToProduct(Integer productId, BigDecimal discount) {
+    public void applyDiscountToProduct(Integer productId, Integer discount) {
         ProductDto productDto = getProductById(productId);
         BigDecimal currentPrice = productDto.getPrice();
-        BigDecimal discountedPrice = currentPrice.subtract(discount);
+        BigDecimal discountedPrice = currentPrice.subtract(new BigDecimal(discount));
         productDto.setPrice(discountedPrice);
         updateProduct(productDto);
     }
+
     @Override
     public void applyPercentageDiscountToProduct(Integer productId, float percentageDiscount) {
         ProductDto productDto = getProductById(productId);

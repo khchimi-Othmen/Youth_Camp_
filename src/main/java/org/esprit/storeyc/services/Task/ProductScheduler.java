@@ -25,32 +25,43 @@ public class ProductScheduler {
     @Autowired
     private ProductServiceImpl productService;
 
-    @Scheduled(fixedDelay = 10000) // run every 10 seconds
+    @Scheduled(fixedDelay = 10000)// run every 10 seconds
     public void verifyProductQuantities() {
         List<Product> products = productService.getAllP();
 
-        // sort products by sales in descending order
-        List<Product> topSellingProducts = products.stream()
-                .sorted(Comparator.comparingInt(Product::getSales).reversed())
-                .limit(5)
-                .collect(Collectors.toList());
+        List<Product> topSellingProducts = getTopSellingProducts(products);
+        List<Product> topWorstProducts = getTopWorstProducts(products);
+        List<Product> lowStockProducts = getLowStockProducts(products);
 
-        // sort products by sales in ascending order
-        List<Product> topWorstProducts = products.stream()
+        String emailText = getEmailText(topSellingProducts, topWorstProducts, lowStockProducts);
+
+        sendEmail("Product sales and stock report", emailText);
+    }
+
+    public List<Product> getTopSellingProducts(List<Product> products) {
+        return products.stream()
+                .sorted(Comparator.comparingInt(Product::getSales).reversed())
+                .limit(4)
+                .collect(Collectors.toList());
+    }
+
+    public List<Product> getTopWorstProducts(List<Product> products) {
+        return products.stream()
                 .filter(p -> p.getSales() > 0)
                 .sorted(Comparator.comparingInt(Product::getSales))
-                .limit(5)
+                .limit(4)
                 .collect(Collectors.toList());
+    }
 
-        // sort products by quantity available in ascending order
-        List<Product> lowStockProducts = products.stream()
+    public List<Product> getLowStockProducts(List<Product> products) {
+        return products.stream()
                 .filter(p -> p.getQuantityAvailable() < 10)
                 .sorted(Comparator.comparingInt(Product::getQuantityAvailable))
-                .limit(5)
+                .limit(10)
                 .collect(Collectors.toList());
+    }
 
-        // create email message
-        String subject = "Product sales and stock report";
+    private String getEmailText(List<Product> topSellingProducts, List<Product> topWorstProducts, List<Product> lowStockProducts) {
         StringBuilder text = new StringBuilder();
         text.append("Top 5 selling products:\n");
         for (Product product : topSellingProducts) {
@@ -60,10 +71,7 @@ public class ProductScheduler {
         for (Product product : topWorstProducts) {
             text.append("- ").append(product.getName()).append(": ").append(product.getSales());
             if (Objects.equals(product.getPromotion(), "to be promoted")) {
-                productService.addPromotionToProduct(product.getProductId(), "Products of the days");
-                productService.applyPercentageDiscountToProduct(product.getProductId(), 10f);
-                BigDecimal discountedPrice = product.getPrice().multiply(BigDecimal.valueOf(0.8));
-                text.append(" (original price: ").append(product.getPrice()).append(", discounted price: ").append(discountedPrice).append(")");
+                applyProductPromotion(product, text);
             } else {
                 text.append(" (original price: ").append(product.getPrice()).append(")");
             }
@@ -73,9 +81,23 @@ public class ProductScheduler {
         for (Product product : lowStockProducts) {
             text.append("- ").append(product.getName()).append(": ").append(product.getQuantityAvailable()).append("\n");
         }
+        return text.toString();
+    }
 
-        // send email to admin
-        sendEmail(subject, text.toString());
+    private void applyProductPromotion(Product product, StringBuilder text) {
+        productService.addPromotionToProduct(product.getProductId(), "Products of the days");
+        productService.applyPercentageDiscountToProduct(product.getProductId(), 10f);
+        BigDecimal discountedPrice = product.getPrice().multiply(BigDecimal.valueOf(0.8));
+        text.append(" (original price: ").append(product.getPrice()).append(", discounted price: ").append(discountedPrice).append(")");
+    }
+
+    public BigDecimal getTotalRevenue(List<Product> products) {
+        BigDecimal totalRevenue = BigDecimal.ZERO;
+        for (Product product : products) {
+            BigDecimal productRevenue = product.getPrice().multiply(BigDecimal.valueOf(product.getSales()));
+            totalRevenue = totalRevenue.add(productRevenue);
+        }
+        return totalRevenue;
     }
 
     private void sendEmail(String subject, String text) {

@@ -17,9 +17,9 @@ public class LineCmdDto {
     private BigDecimal total;
     private Integer nbrRentalPerDays;
 
-    @JsonIgnore
+//    @JsonIgnore
     private ProductDto productDto;
-    @JsonIgnore
+//    @JsonIgnore
     private CommandDto commandDto;
     public LineCmdDto(ProductDto productDto, Integer quantite, Integer nbrRentalPerDays) {
         this.productDto = productDto;

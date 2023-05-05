@@ -2,6 +2,7 @@ package org.esprit.storeyc.controllers;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.esprit.storeyc.dto.CategoryDto;
+import org.esprit.storeyc.entities.Product;
 import org.esprit.storeyc.services.interfaces.ICategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +12,8 @@ import java.util.List;
 @Tag(name = "Category Management")
 @RestController
 @RequestMapping("/categories")
+@CrossOrigin("*")
+
 public class CategoryController {
 
 	@Autowired
@@ -39,6 +42,11 @@ public class CategoryController {
 	@GetMapping("/getAllCategories")
 	public List<CategoryDto> getAllCategories() {
 		return categoryService.getAllCategories();
+	}
+
+	@GetMapping("/getProductsByCategory/{categoryId}")
+	public List<Product> getProductsByCategory(@PathVariable Integer categoryId) {
+		return categoryService.getProductsByCategory(categoryId);
 	}
 
 	@GetMapping("/type/{categoryType}")

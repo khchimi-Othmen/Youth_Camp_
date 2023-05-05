@@ -21,7 +21,7 @@ public class CategoryDto {
     private String categoryType;
     private String code; // add this property
 
-    @JsonIgnore
+//    @JsonIgnore
     private List<Product> products;
 
     public static CategoryDto fromEntity(Category category) {

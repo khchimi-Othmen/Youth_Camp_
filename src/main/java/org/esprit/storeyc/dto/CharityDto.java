@@ -27,7 +27,7 @@ public class CharityDto {
 
 //    private List<Integer> commandIds;
 
-    @JsonIgnore
+//    @JsonIgnore
     public static CharityDto fromEntity(Charity charity) {
         if (charity == null) {
             return null;

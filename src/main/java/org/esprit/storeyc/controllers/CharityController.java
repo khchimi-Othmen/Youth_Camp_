@@ -3,6 +3,7 @@ package org.esprit.storeyc.controllers;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.esprit.storeyc.dto.CharityDto;
+import org.esprit.storeyc.dto.ProductDto;
 import org.esprit.storeyc.services.impl.CharityServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import java.util.List;
 @Tag(name = "Charity Management")
 @RestController
 @RequestMapping("/charity")
+@CrossOrigin("*")
 public class CharityController {
     @Autowired
     private CharityServiceImpl charityService;
@@ -39,12 +41,16 @@ public class CharityController {
         charityService.deleteCharity(id);
     }
 
-    @PutMapping("assignCommandToCharity/{idCommand}/{idCharity}")
+    @PutMapping("assignCommandToCarity/{idCommand}/{idCharity}")
     public String assignCharityToCommand(@PathVariable Integer idCommand,@PathVariable Integer idCharity) {
         return charityService.assignCharityToCommand(idCommand,idCharity);
     }
     @PutMapping("markCommandAsDonationBEFOREFINALIZ/{idCommand}")
     public String markCommandAsDonation(@PathVariable Integer idCommand) {
         return charityService.markCommandAsDonation(idCommand);
+    }
+    @GetMapping("/charities")
+    public List<CharityDto> searchCharitiesByName(String name) {
+        return charityService.searchCharitiesByName(name);
     }
 }

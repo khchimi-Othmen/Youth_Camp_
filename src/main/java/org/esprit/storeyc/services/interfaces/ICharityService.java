@@ -12,4 +12,5 @@ public interface ICharityService {
      CharityDto getCharityById(Integer id) ;
      String assignCharityToCommand(Integer idCommand, Integer IdCharity);
      String markCommandAsDonation(Integer idCommand) ;
-     }
+     List<CharityDto> searchCharitiesByName(String name) ;
+}

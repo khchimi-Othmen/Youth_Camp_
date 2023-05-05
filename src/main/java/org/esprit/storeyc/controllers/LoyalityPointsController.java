@@ -3,14 +3,13 @@ package org.esprit.storeyc.controllers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.esprit.storeyc.services.impl.CommandServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Loyality Points Management")
 @RestController
 @RequestMapping("/LoyalityPoints")
+@CrossOrigin("*")
+
 public class LoyalityPointsController {
     @Autowired
     private CommandServiceImpl commandService;
