@@ -1,4 +1,4 @@
-# Online_Store
+# Online_Store(SpringBoot)
 
 This repository contains a web development project for creating an online store. The project uses a layered architecture with multiple layers including MVC, AOP, DTO, Validator, and custom exceptions. The project also uses Stripe, PDF, and email APIs. JUnit was used to test the project's methods. In addition, this project uses a MySQL server for data storage and retrieval. Swagger configuration and cross-origin configuration have also been implemented in this project. A scheduler has been added to send email notifications to the admin about top and low in stock statistics.
 
